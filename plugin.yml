@@ -1,0 +1,4 @@
+name: EconomyAPI
+main: gmp\eco\API
+version: 1.0
+api: 5.0.0
