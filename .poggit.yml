@@ -1,7 +1,7 @@
 --- # Poggit-CI Manifest. Open the CI at https://poggit.pmmp.io/ci/Savin1play140/EconomyAPI
 build-by-default: true
 branches:
-- PM5
+- main
 projects:
   EconomyAPI:
     path: ""
