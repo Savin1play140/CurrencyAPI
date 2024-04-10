@@ -13,6 +13,8 @@ SimpleForm
 Main:
 ```php
 use gmp\eco\API;
+
+
 	/* ... */
 		API::registerCurrency(new YourCurrency());
 	/* ... */
