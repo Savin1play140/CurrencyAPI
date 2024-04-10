@@ -52,18 +52,18 @@ $target->set($currency->getName(), $count);
 $count = $target->get($currency->getName());
 ```
 
-# Комманды
-Поумолчанию:
+# Команды
+По умолчанию:
 /dollar
- - set <count: int> <?player: string> толко операторы
- - add <count: int> <?player: string> толко операторы
+ - set <count: int> <?player: string> только операторы
+ - add <count: int> <?player: string> только операторы
 /coinio
- - set <count: int> <?player: string> толко операторы
- - add <count: int> <?player: string> толко операторы
-Добовляемые другими плагинам:
+ - set <count: int> <?player: string> только операторы
+ - add <count: int> <?player: string> только операторы
+Добавляемые другими плагинам:
 CurrencyName - английское название валюты
 
 /CurrencyName
- - set <count: int> <?player: string> толко операторы
- - add <count: int> <?player: string> толко операторы
+ - set <count: int> <?player: string> только операторы
+ - add <count: int> <?player: string> только операторы
 
