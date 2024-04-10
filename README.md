@@ -2,14 +2,7 @@
 
 Двухсторонний экономический A.P.I. для создания валют с одной стороны, а с другой обычный экономический плагин PMMP-5
 
-<br/><br/>
-Примеры использования:
-<br/><br/>
-SimpleForm
------------------------------------
-<br/>
-
-# Для создания валюты:
+# Для создания валюты
 Main:
 ```php
 use gmp\eco\API;
@@ -47,7 +40,7 @@ class YourCurrency implements Currency {
 	public function isSalable(): bool { return true; }
 }
 ```
-# Для использования экономической стороны:
+# Для использования экономической стороны
 ```php
 // Для добавления к балансу валюты игрока
 $target->add($currency->getName(), $count);
@@ -58,3 +51,19 @@ $target->set($currency->getName(), $count);
 // Для получения баланса валюты игрока
 $count = $target->get($currency->getName());
 ```
+
+# Комманды
+Поумолчанию:
+/dollar
+ - set <count: int> <?player: string> толко операторы
+ - add <count: int> <?player: string> толко операторы
+/coinio
+ - set <count: int> <?player: string> толко операторы
+ - add <count: int> <?player: string> толко операторы
+Добовляемые другими плагинам:
+CurrencyName - английское название валюты
+
+/CurrencyName
+ - set <count: int> <?player: string> толко операторы
+ - add <count: int> <?player: string> толко операторы
+
