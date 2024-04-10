@@ -13,9 +13,9 @@ SimpleForm
 Main:
 ```php
 use gmp\eco\API;
-/* ... */
-API::registerCurrency(new YourCurrency());
-/* ... */
+	/* ... */
+		API::registerCurrency(new YourCurrency());
+	/* ... */
 ```
 Вместо YourCurrency класс вашей валюты
 YourCurrency:
@@ -27,19 +27,19 @@ use gmp\eco\currency\Currency;
 
 class YourCurrency implements Currency {
 	public function getPrice(): int {
-        return 1;
-    }
+		return 1;
+	}
 	public function getExchangable(): string {
 		return "Dollar";
 	}
 	public function onBuy(int $count): void { /* code */ }
 	public function onSell(int $count): void { /* code */ }
-	//public function setPrice(int $price): void { /* code */ }
+	public function setPrice(int $price): void { /* code */ }
 	public function getName(): string {
-		return "Dollar"; // currency name
+		return "Currency"; // currency name
 	}
 	public function getSing(): string {
-		return "$"; // sing
+		return "C"; // sing
 	}
 	public function isBuyable(): bool { return true; }
 	public function isSalable(): bool { return true; }
