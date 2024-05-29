@@ -1,8 +1,8 @@
---- # Poggit-CI Manifest. Open the CI at https://poggit.pmmp.io/ci/Savin1play140/EconomyAPI
+--- # Poggit-CI Manifest. Open the CI at https://poggit.pmmp.io/ci/Savin1play140/CurrencyAPI
 build-by-default: true
 branches:
 - main
 projects:
-  EconomyAPI:
+  CurrencyAPI:
     path: ""
 ...
