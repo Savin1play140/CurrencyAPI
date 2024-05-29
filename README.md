@@ -1,4 +1,4 @@
-# EconomyAPI | PocketMine-MP
+# CurrencyAPI | PocketMine-MP
 [![](https://poggit.pmmp.io/shield.state/EconomyAPI_Currences)](https://poggit.pmmp.io/p/EconomyAPI_Currences)<br>
 [![](https://poggit.pmmp.io/shield.api/EconomyAPI_Currences)](https://poggit.pmmp.io/p/EconomyAPI_Currences)<br>
 Двухсторонний экономический A.P.I. для создания валют с одной стороны, а с другой обычный экономический плагин PMMP-5
