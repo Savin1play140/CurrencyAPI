@@ -1,0 +1,23 @@
+{
+	"command": {
+		"about": "action with {command.name}"
+	},
+	"sub_command": {
+		"about": "perform the {name}",
+		"not_found": "Player not found",
+		"successful": "Balance {target.name}'s has {action} to {count}{sing}"
+	},
+	"player": {
+		"set": "Your balance is set to {count}{sing}",
+		"add": "{count}{sing} was added to your balance, now it's {balance}{sing}",
+		"remove": "{count}{sing} was removed from your balance, now it's {balance}{sing}",
+		"dept": "Your have been deducted {count}{sing} due to debt, now it's {balance}{sing}",
+		"saved": "Your balance successful saved",
+		"nomoney": "Missing {missing}{sing}",
+		"nocurrency": "ERROR: nocurrency"
+	},
+	"subform": {
+		"not_buy": "you're missing {c.name}, count: {count.not}",
+		"not_sell": "you're missing {c.name}, count: {count.not}"
+	}
+}
