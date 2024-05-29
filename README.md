@@ -58,15 +58,19 @@ $count = $target->get($currency->getName());
 # Команды
 По умолчанию:
 /dollar
- - set <count: int> <?player: string> только операторы
- - add <count: int> <?player: string> только операторы
+ - set <count: int> [player: string] только операторы
+ - add <count: int> [player: string] только операторы
+ - remove <count: int> [player: string] только операторы
+ - transaction <count: int> <player: int> все игроки
 /coinio
  - set <count: int> <?player: string> только операторы
  - add <count: int> <?player: string> только операторы
+ - remove <count: int> [player: string] только операторы
+ - transaction <count: int> <player: int> все игроки
 Добавляемые другими плагинам:
-CurrencyName - английское название валюты
-
 /CurrencyName
  - set <count: int> <?player: string> только операторы
  - add <count: int> <?player: string> только операторы
+ - remove <count: int> [player: string] только операторы
+ - transaction <count: int> <player: int> все игроки
 
