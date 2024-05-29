@@ -49,6 +49,8 @@ $target->add($currency->getName(), $count);
 $target->remove($currency->getName(), $count);
 // Для установки баланса валюты игрока
 $target->set($currency->getName(), $count);
+// Для совершения транзакции
+$target->transaction($currency->getName(), $count $player);
 // Для получения баланса валюты игрока
 $count = $target->get($currency->getName());
 ```
