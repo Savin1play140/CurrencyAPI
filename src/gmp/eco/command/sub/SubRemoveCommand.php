@@ -12,12 +12,12 @@ use gmp\eco\player\Player;
 use gmp\eco\{API, Form};
 use gmp\eco\currency\Currency;
 
-class SubAddCommand extends BaseSubCommand {
+class SubRemoveCommand extends BaseSubCommand {
 	public function __construct(
 		private Currency $currency,
 		private API $API
 	) {
-		parent::__construct("add", "add to balance currency");
+		parent::__construct("remove", "remove from balance currency");
 		$this->setPermission(DefaultPermissions::ROOT_OPERATOR);
 	}
 	protected function prepare(): void {
@@ -39,7 +39,7 @@ class SubAddCommand extends BaseSubCommand {
 			$this->sendUsage();
 			return;
 		}
-		$target->add($this->currency->getName(), $count);
+		$target->remove($this->currency->getName(), $count);
 		$sender->sendMessage(
 			str_replace(
 				"{count}",
@@ -50,7 +50,7 @@ class SubAddCommand extends BaseSubCommand {
 					str_replace(
 						"{balance}",
 						$sender->get($this->currency->getName()),
-						API::getLang()->getNested("player.add")
+						API::getLang()->getNested("player.remove")
 					)
 				)
 			)

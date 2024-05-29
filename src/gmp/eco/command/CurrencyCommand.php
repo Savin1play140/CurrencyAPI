@@ -9,7 +9,7 @@ use pocketmine\permission\DefaultPermissions;
 use gmp\eco\player\Player;
 use gmp\eco\{API, Form};
 use gmp\eco\currency\Currency;
-use gmp\eco\command\sub\{SubSetCommand, SubAddCommand};
+use gmp\eco\command\sub\{SubSetCommand, SubAddCommand, SubRemoveCommand, SubTransactionCommand};
 
 class CurrencyCommand extends BaseCommand {
 	public function __construct(
@@ -19,7 +19,7 @@ class CurrencyCommand extends BaseCommand {
 		parent::__construct(
 			$this->API,
 			mb_strtolower($this->currency->getName(), "UTF-8"),
-			"About the ".$this->currency->getName()
+			str_replace("{command.name}", $this->currency->getName(), API::getLang()->getNested("command.about"))
 		);
 		$this->setPermission(DefaultPermissions::ROOT_USER);
 	}
@@ -27,6 +27,8 @@ class CurrencyCommand extends BaseCommand {
 	protected function prepare(): void {
 		$this->registerSubCommand(new SubSetCommand($this->currency, $this->API));
 		$this->registerSubCommand(new SubAddCommand($this->currency, $this->API));
+		$this->registerSubCommand(new SubRemoveCommand($this->currency, $this->API));
+		$this->registerSubCommand(new SubTransactionCommand($this->currency, $this->API));
 	}
 
 	public function onRun(CommandSender $sender, string $aliasUsed, array $args): void {

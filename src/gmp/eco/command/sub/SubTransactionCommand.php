@@ -12,26 +12,20 @@ use gmp\eco\player\Player;
 use gmp\eco\{API, Form};
 use gmp\eco\currency\Currency;
 
-class SubAddCommand extends BaseSubCommand {
+class SubTransactionCommand extends BaseSubCommand {
 	public function __construct(
 		private Currency $currency,
 		private API $API
 	) {
-		parent::__construct("add", "add to balance currency");
-		$this->setPermission(DefaultPermissions::ROOT_OPERATOR);
+		parent::__construct("transaction", "transaction between balances currency");
+		$this->setPermission(DefaultPermissions::ROOT_USER);
 	}
 	protected function prepare(): void {
 		$this->registerArgument(0, new IntegerArgument("count", false));
-		$this->registerArgument(1, new RawStringArgument("player", true));
+		$this->registerArgument(1, new RawStringArgument("player", false));
 	}
 	public function onRun(CommandSender $sender, string $aliasUsed, array $args): void {
-		$target = $sender;
-		if (isset($args["player"])) {
-			$target = Server::getInstance()->getPlayerExact($args["player"]);
-			if (is_null($target)) {
-				$sender->sendMessage("§l§cPlayer not found online");
-			}
-		}
+		$target = Server::getInstance()->getPlayerExact($args["player"]);
 		if (!$target instanceof Player) return;
 		if (isset($args["count"])) {
 			$count = $args["count"];
@@ -39,21 +33,6 @@ class SubAddCommand extends BaseSubCommand {
 			$this->sendUsage();
 			return;
 		}
-		$target->add($this->currency->getName(), $count);
-		$sender->sendMessage(
-			str_replace(
-				"{count}",
-				$count,
-				str_replace(
-					"{sing}",
-					$this->currency->getSing(),
-					str_replace(
-						"{balance}",
-						$sender->get($this->currency->getName()),
-						API::getLang()->getNested("player.add")
-					)
-				)
-			)
-		);
+		$sender->transaction($this->currency->getName(), $count, $target);
 	}
 }

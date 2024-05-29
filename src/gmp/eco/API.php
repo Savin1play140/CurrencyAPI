@@ -19,13 +19,16 @@ final class API extends PluginBase implements Listener {
 	private static array $currences = [];
 	private static \AttachableLogger $logger;
 	private static ?API $instance = null;
+	private static Config $api_config;
+	private static Config $lang;
 
 	
 	public function onEnable(): void {
+		self::$api_config = new Config($this->getDataFolder()."settings.yml", Config::YAML);
+		self::$lang = new Config($this->getDataFolder()."lang/".self::$api_config->get("lang", "EN_US").".json");
 		self::$instance = $this;
 		self::$logger = $this->getLogger();
 		if (!file_exists($this->getDataFolder()."players/")) mkdir($this->getDataFolder()."players/", 0777, true);
-		$this->getLogger()->info("Plugn loaded");
 		$this->getServer()->getPluginManager()->registerEvents($this, $this);
 
 
@@ -34,6 +37,12 @@ final class API extends PluginBase implements Listener {
 		if(!PacketHooker::isRegistered()) {
 			PacketHooker::register($this);
 		}
+	}
+	public static function getLang(): Config {
+		return self::$lang;
+	}
+	public static function getAPIConfig(): Config {
+		return self::$api_config;
 	}
 	public function onCreation(PlayerCreationEvent $event): void {
 		$event->setBaseClass(Player::class);
@@ -44,7 +53,7 @@ final class API extends PluginBase implements Listener {
 		$config = new Config($this->getDataFolder()."players/".$player->getName().".json",Config::JSON);
 		$config->setDefaults(["dollar" => 100]);
 		$player->Init($this, $config);
-		$this->getLogger()->info("Player use class: ".get_class($player));
+		$this->getLogger()->debug("Player use class: ".get_class($player));
 	}
 	public static function getFolder(): string {
 		return self::$instance->getDataFolder();

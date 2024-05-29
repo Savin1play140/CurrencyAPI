@@ -20,7 +20,7 @@ final class Player extends PPlayer {
 	public function haveCurrency(string $name): bool {
 		$name = strtolower($name);
 		if (!API::existCurrency($name)) return false;
-		if ($this->save->get($name) == null) return false;
+		if ($this->save->get($name) === null) return false;
 		return true;
 	}
 
@@ -28,14 +28,24 @@ final class Player extends PPlayer {
 	public function get(string $currencyName): int {
 		$currencyName = strtolower($currencyName);
 		if (!$this->haveCurrency($currencyName)) return 0;
-		return $this->save->get($currencyName);
+		return (int)round($this->save->get($currencyName));
 	}
 	public function set(string $currencyName, int $count): void {
 		$currencyName = strtolower($currencyName);
 		if (!API::existCurrency($currencyName)) return;
 		$this->save->set($currencyName, $count);
 		$sing = API::getCurrencyByName($currencyName)->getSing();
-		$this->sendActionBarMessage("§2§lYour balance {$currencyName}'s is {$count}{$sing} now");
+		$this->sendActionBarMessage(
+			str_replace(
+				"{count}",
+				$count,
+				str_replace(
+					"{sing}",
+					$sing,
+					API::getLang()->getNested("player.set")
+				)
+			)
+		);
 	}
 
 	public function add(string $currencyName, int $count): void {
@@ -43,15 +53,63 @@ final class Player extends PPlayer {
 		if (!API::existCurrency($currencyName)) return;
 		$this->save->set($currencyName, $this->save->get($currencyName)+$count);
 		$sing = API::getCurrencyByName($currencyName)->getSing();
-		$this->sendActionBarMessage("§2§l{$count}{$sing} added to your balance {$currencyName}'s, balance is: {$this->save->get($currencyName)}");
+		$this->sendActionBarMessage(
+			str_replace(
+				"{count}",
+				$count,
+				str_replace(
+					"{sing}",
+					$sing,
+					str_replace(
+						"{balance}",
+						$this->save->get($currencyName),
+						API::getLang()->getNested("player.add")
+					)
+				)
+			)
+		);
 	}
-	public function remove(string $currencyName, int $count): bool {
+	public function remove(string $currencyName, int $count, bool $no_message = false): bool {
 		$currencyName = strtolower($currencyName);
-		if (!$this->haveCurrency($currencyName)) return false;
-		if ($this->save->get($currencyName) < $count) return false;
+		if (!$this->haveCurrency($currencyName)) {
+			$this->sendActionBarMessage(
+				API::getLang()->getNested("player.nocurrency")
+			);
+			return false;
+		}
+		$boolean = $this->save->get($currencyName) < $count;
+		if ($boolean) {
+			$sing = API::getCurrencyByName($currencyName)->getSing();
+			$this->sendActionBarMessage(
+				str_replace(
+					"{missing}",
+					$count-$this->save->get($currencyName),
+					str_replace(
+						"{sing}",
+						$sing,
+						API::getLang()->getNested("player.nomoney")
+					)
+				)
+			);
+			return false;
+		}
 		$this->save->set($currencyName, $this->save->get($currencyName)-$count);
 		$sing = API::getCurrencyByName($currencyName)->getSing();
-		$this->sendActionBarMessage("§2§l{$count}{$sing} removed to your balance {$currencyName}'s, balance is: {$this->save->get($currencyName)}");
+		if (!$no_message) $this->sendActionBarMessage(
+			str_replace(
+				"{count}",
+				$count,
+				str_replace(
+					"{sing}",
+					$sing,
+					str_replace(
+						"{balance}",
+						$this->save->get($currencyName),
+						API::getLang()->getNested("player.remove")
+					)
+				)
+			)
+		);
 		return true;
 	}
 	public function purchase(string $currencyName, int $count, ?callable $callable0, ?callable $callable1) {
@@ -66,11 +124,22 @@ final class Player extends PPlayer {
 			if (!is_null($callable1)) $callable1($currency);
 		}
 	}
+	public function transaction(string $currencyName, int $count, Player $player): bool {
+		if ($this->remove($currencyName, $count, true)) {
+			$player->add($currencyName, $count);
+			return true;
+		}
+		return false;
+	}
 
 
 	public function saveConfig(): void {
-		$this->save->save();
-		$this->sendActionBarMessage("§2§lYour balance saved");
+		try {
+			$this->save->save();
+			$this->sendActionBarMessage(API::getLang()->getNested("player.saved"));
+		} catch (Error $error) {
+			throw $error;
+		}
 	}
 	public function disconnect(Translatable|string $reason, Translatable|string|null $quitMessage = null, Translatable|string|null $disconnectScreenMessage = null) : void{
 		$this->removeCurrentWindow();

@@ -1,4 +1,4 @@
-name: EconomyAPI
+name: CurrencyAPI
 main: gmp\eco\API
-version: 1.0
+version: 1.5
 api: 5.0.0
