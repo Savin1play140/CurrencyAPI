@@ -10,7 +10,7 @@ use gmp\eco\API;
 
 
 	/* ... */
-		API::registerCurrency(new YourCurrency());
+		API::registerCurrency(new YourCurrency(), $main->getName());
 	/* ... */
 ```
 Вместо YourCurrency класс вашей валюты
