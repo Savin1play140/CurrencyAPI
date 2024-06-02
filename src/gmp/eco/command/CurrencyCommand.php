@@ -4,6 +4,7 @@ namespace gmp\eco\command;
 use CortexPE\Commando\BaseCommand;
 
 use pocketmine\command\{Command, CommandSender};
+use pocketmine\plugin\{PluginOwned, Plugin};
 use pocketmine\permission\DefaultPermissions;
 
 use gmp\eco\player\Player;
@@ -11,7 +12,10 @@ use gmp\eco\{API, Form};
 use gmp\eco\currency\Currency;
 use gmp\eco\command\sub\{SubSetCommand, SubAddCommand, SubRemoveCommand, SubTransactionCommand};
 
-class CurrencyCommand extends BaseCommand {
+class CurrencyCommand extends BaseCommand implements PluginOwned {
+	public function getOwningPlugin(): Plugin {
+		return $this->API;
+	}
 	public function __construct(
 		private Currency $currency,
 		public API $API
@@ -38,7 +42,7 @@ class CurrencyCommand extends BaseCommand {
 		$sing = API::getCurrencyByName($this->currency->getExchangable())->getSing();
 		Form::sendSelf(
 			"§l".$name." [".$this->API->getName()."]",
-			"§l".$name." price: ".$currency->getPrice().$sing."\nYou have: ".$sender->get($name).$currency->getSing(),
+			"§l".$name." price: ".number_format($currency->getPrice(), 2, ".", ",").$sing."\nYou have: ".number_format($sender->get($name), 2, ".", ",").$currency->getSing(),
 			$sender,
 			$this->currency
 		);

@@ -2,7 +2,7 @@
 namespace gmp\eco\command\sub;
 
 use CortexPE\Commando\BaseSubCommand;
-use CortexPE\Commando\args\{RawStringArgument, IntegerArgument};
+use CortexPE\Commando\args\{RawStringArgument, FloatArgument};
 
 use pocketmine\command\{Command, CommandSender};
 use pocketmine\permission\DefaultPermissions;
@@ -21,7 +21,7 @@ class SubTransactionCommand extends BaseSubCommand {
 		$this->setPermission(DefaultPermissions::ROOT_USER);
 	}
 	protected function prepare(): void {
-		$this->registerArgument(0, new IntegerArgument("count", false));
+		$this->registerArgument(0, new FloatArgument("count", false));
 		$this->registerArgument(1, new RawStringArgument("player", false));
 	}
 	public function onRun(CommandSender $sender, string $aliasUsed, array $args): void {

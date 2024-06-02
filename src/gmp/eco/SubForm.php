@@ -13,24 +13,24 @@ final class SubForm {
 		$form = new CustomForm(
 			function (Player $sender, ?array $data) use ($currency) {
 				if(is_null($data)) return;
-				$count = (int)$data[1];
+				$count = (float)$data[1];
 				if ($count < 1 or is_null($count)) return;
 				if ($count > 1000000) {
-					$sender->sendMessage("You can't sell more 1 000 000");
+					$sender->sendMessage("You can't sell more 1,000,000");
 					return;
 				}
-				if ($sender->get($currency->getName()) < (int)round($count)) {
-					$sender->sendMessage("you're missing ".$currency->getName().", count: ".$count-$sender->get($currency->getName()));
+				if (round($sender->get($currency->getName()), 2) < round($count, 2)) {
+					$sender->sendMessage("you're missing ".$currency->getName().", count: ".number_format($count-$sender->get($currency->getName()), 0, ".", ","));
 					return;
 				}
-				$sender->remove($currency->getName(), (int)round($count));
-				$sender->add($currency->getExchangable(), (int)round($currency->getPrice()*$count));
-				$currency->onSell((int)round($count));
+				$sender->remove($currency->getName(), round($count, 2));
+				$sender->add($currency->getExchangable(), round($currency->getPrice()*$count, 2));
+				$currency->onSell(round($count, 2));
 			}
 		);
 		$form->setTitle($name);
 		$form->addLabel($content);
-		$form->addInput("count", "Ineger only", "100");
+		$form->addInput("count", "Ineger only", "1000");
 		$form->sendToPlayer($player);
 	}
 	// buy
@@ -38,24 +38,24 @@ final class SubForm {
 		$form = new CustomForm(
 			function (Player $sender, ?array $data) use ($currency) {
 				if(is_null($data)) return;
-				$count = (int)$data[1];
+				$count = round($data[1], 2);
 				if ($count < 1 or is_null($count)) return;
 				if ($count > 1000000) {
-					$sender->sendMessage("You can't buy more 1 000 000");
+					$sender->sendMessage("You can't buy more 1,000,000");
 					return;
 				}
-				if ($sender->get($currency->getExchangable()) < (int)round($currency->getPrice()*$count)) {
-					$sender->sendMessage("you're missing ".$currency->getExchangable().", count: ".$currency->getPrice()*$count-$sender->get($currency->getExchangable()));
+				if ($sender->get($currency->getExchangable()) < round($currency->getPrice()*$count, 2)) {
+					$sender->sendMessage("you're missing ".$currency->getExchangable().", count: ".number_format($currency->getPrice()*$count-$sender->get($currency->getExchangable()), 0, ".", ","));
 					return;
 				}
-				$sender->remove($currency->getExchangable(), (int)round($currency->getPrice()*$count));
-				$sender->add($currency->getName(), (int)round($count));
-				$currency->onBuy((int)round($count));
+				$sender->remove($currency->getExchangable(), round($currency->getPrice()*$count, 2));
+				$sender->add($currency->getName(), round($count, 2));
+				$currency->onBuy(round($count, 2));
 			}
 		);
 		$form->setTitle($name);
 		$form->addLabel($content);
-		$form->addInput("count", "Ineger only", "100");
+		$form->addInput("count", "Ineger only", "1000");
 		$form->sendToPlayer($player);
 	}
 }

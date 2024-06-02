@@ -3,34 +3,40 @@ namespace gmp\eco\currency;
 use gmp\eco\API;
 
 class CoinIO implements Currency {
-	private int $price = 100;
-	public function getPrice(): int {
-		return $this->price;
+	private float $price = 100.0;
+	public function getPrice(): float {
+		return (float)$this->price;
 	}
 	public function getExchangable(): string {
 		return "Dollar";
 	}
-	public function onBuy(int $count): void {
+	public function onBuy(float $count): void {
 		$oldPrice = $this->getPrice();
 		$coin_coff_buy = API::getAPIConfig()->get("coin_coff_buy", 0.01);
 		//$newPrice = $oldPrice+(($oldPrice*$coin_coff_buy)*$this->getProcent())*($count*$coin_coff_buy);
-		$newPrice = $oldPrice+$oldPrice*$coin_coff_buy*($count/1000);
+		$newPrice = $oldPrice+$oldPrice*$coin_coff_buy*$this->removeZero($count)/10;
+		$newPrice = round($newPrice, 2);
 		if ($newPrice >= PHP_INT_MAX) return;
-		if ($newPrice <= PHP_INT_MIN) return;
 		if ($newPrice <= 0) return;
-		$this->setPrice((int)round($newPrice));
+		$this->setPrice($newPrice);
 	}
-	public function onSell(int $count): void {
+	public function onSell(float $count): void {
 		$oldPrice = $this->getPrice();
-		$coin_coof_sell = API::getAPIConfig()->get("coin_coff_sell", 0.01);
-		//$newPrice = $oldPrice-(($oldPrice*$coin_coof_sell)*$this->getProcent())*($count*$coin_coof_sell);
-		$newPrice = $oldPrice-$oldPrice*$coin_coof_sell*($count/1000);
+		$coin_coff_sell = API::getAPIConfig()->get("coin_coff_sell", 0.01);
+		//$newPrice = $oldPrice-(($oldPrice*$coin_coff_sell)*$this->getProcent())*($count*$coin_coff_sell);
+		$newPrice = $oldPrice-$oldPrice*$coin_coff_sell*$this->removeZero($count)/10;
+		$newPrice = round($newPrice, 2);
 		if ($newPrice >= PHP_INT_MAX) return;
-		if ($newPrice <= PHP_INT_MIN) return;
 		if ($newPrice <= 0) return;
-		$this->setPrice((int)round($newPrice));
+		$this->setPrice($newPrice);
 	}
-	protected function setPrice(int $price): void {
+	public function removeZero(float $float): float {
+		$zeroCount = substr_count($float, '0');
+		$half = 1000;
+		$str = str_replace('0', '', "$float", $half);
+		return (float)$str;
+	}
+	protected function setPrice(float $price): void {
 		$this->price = $price;
 	}
 	public function getName(): string {

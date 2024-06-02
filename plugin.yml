@@ -1,4 +1,4 @@
 name: CurrencyAPI
 main: gmp\eco\API
-version: 1.5
+version: 1.5-2
 api: 5.0.0

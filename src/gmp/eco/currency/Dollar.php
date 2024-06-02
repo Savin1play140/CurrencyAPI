@@ -2,15 +2,15 @@
 namespace gmp\eco\currency;
 
 class Dollar implements Currency {
-	public function getPrice(): int {
-        return 1;
+	public function getPrice(): float {
+        return 1.0;
     }
 	public function getExchangable(): string {
 		return "Dollar";
 	}
-	public function onBuy(int $count): void {}
-	public function onSell(int $count): void {}
-	//public function setPrice(int $price): void {}
+	public function onBuy(float $count): void {}
+	public function onSell(float $count): void {}
+	//public function setPrice(float $price): void {}
 	public function getName(): string {
 		return "Dollar";
 	}
