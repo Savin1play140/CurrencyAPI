@@ -55,12 +55,12 @@ $count = $target->get($currency->getName());
 ```
 
 # Commands
-Default: \n
+Default: <br>
 /dollar
  - set <count: int> [player: string] operators only
  - add <count: int> [player: string] operators only
  - remove <count: int> [player: string] operators only
- - transaction <count: int> <player: int> all players \n
+ - transaction <count: int> <player: int> all players <br>
 /coinio
  - set <count: int> <?player: string> operators only
  - add <count: int> <?player: string> operators only
