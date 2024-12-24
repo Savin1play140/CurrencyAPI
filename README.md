@@ -49,7 +49,7 @@ $target->remove($currency->getName(), $count);
 // To set the player's currency balance
 $target->set($currency->getName(), $count);
 // To complete a transaction
-$target->transaction($currency->getName(), $count $player);
+$target->transaction($currency->getName(), $count, $player);
 // To get the player's currency balance
 $count = $target->get($currency->getName());
 ```
