@@ -21,15 +21,15 @@ namespace your\plugin\space;
 use gmp\eco\currency\Currency;
 
 class YourCurrency implements Currency {
-	public function getPrice(): int {
+	public function getPrice(): float {
 		return 1;
 	}
 	public function getExchangable(): string {
 		return "Dollar";
 	}
-	public function onBuy(int $count): void { /* code */ }
-	public function onSell(int $count): void { /* code */ }
-	public function setPrice(int $price): void { /* code */ }
+	public function onBuy(float $count): void { /* code */ }
+	public function onSell(float $count): void { /* code */ }
+	public function setPrice(float $price): void { /* code */ }
 	public function getName(): string {
 		return "Currency"; // currency name
 	}
