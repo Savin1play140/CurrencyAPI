@@ -7,13 +7,13 @@ class CoinIO implements Currency {
 	public function getPrice(): float {
 		return (float)$this->price;
 	}
-	public function getExchangable(): string {
+	public function getExchangeable(): string {
 		return "Dollar";
 	}
 	public function onBuy(float $count): void {
 		$oldPrice = $this->getPrice();
 		$coin_coff_buy = API::getAPIConfig()->get("coin_coff_buy", 0.01);
-		//$newPrice = $oldPrice+(($oldPrice*$coin_coff_buy)*$this->getProcent())*($count*$coin_coff_buy);
+		//$newPrice = $oldPrice+(($oldPrice*$coin_coff_buy)*$this->getPercent())*($count*$coin_coff_buy);
 		$newPrice = $oldPrice+$oldPrice*$coin_coff_buy*$this->removeZero($count)/10;
 		$newPrice = round($newPrice, 2);
 		if ($newPrice >= PHP_INT_MAX) return;
@@ -23,7 +23,7 @@ class CoinIO implements Currency {
 	public function onSell(float $count): void {
 		$oldPrice = $this->getPrice();
 		$coin_coff_sell = API::getAPIConfig()->get("coin_coff_sell", 0.01);
-		//$newPrice = $oldPrice-(($oldPrice*$coin_coff_sell)*$this->getProcent())*($count*$coin_coff_sell);
+		//$newPrice = $oldPrice-(($oldPrice*$coin_coff_sell)*$this->getPercent())*($count*$coin_coff_sell);
 		$newPrice = $oldPrice-$oldPrice*$coin_coff_sell*$this->removeZero($count)/10;
 		$newPrice = round($newPrice, 2);
 		if ($newPrice >= PHP_INT_MAX) return;

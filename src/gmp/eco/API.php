@@ -16,7 +16,7 @@ use gmp\eco\command\api\PacketHooker;
 
 final class API extends PluginBase implements Listener {
 	private int $dollarPrice = 1;
-	private static array $currences = [];
+	private static array $currencies = [];
 	private static \AttachableLogger $logger;
 	private static ?API $instance = null;
 	private static Config $api_config;
@@ -57,7 +57,7 @@ final class API extends PluginBase implements Listener {
 					"dept" => "Your have been deducted {count}{sing} due to debt, now it's {balance}{sing}",
 					"saved" => "Your balance successful saved",
 					"nomoney" => "Missing {missing}{sing}",
-					"nocurrency" => "ERROR: nocurrency"
+					"nocurrency" => "ERROR: currency not exists"
 				],
 				"subform" => [
 					"not_buy" => "you're missing {c.name}, count: {count.not}",
@@ -77,8 +77,8 @@ final class API extends PluginBase implements Listener {
 			PacketHooker::register($this);
 		}
 		$this->getLogger()->info("Configured language: ".self::$api_config->get("lang", "EN_US"));
-		$this->getLogger()->info("CoinIO coofficent for \"Buy\": ".self::$api_config->get("coin_coff_buy", 0.01));
-		$this->getLogger()->info("CoinIO coofficent for \"Sell\": ".self::$api_config->get("coin_coff_sell", 0.01));
+		$this->getLogger()->info("CoinIO coefficient for \"Buy\": ".self::$api_config->get("coin_coff_buy", 0.01));
+		$this->getLogger()->info("CoinIO coefficient for \"Sell\": ".self::$api_config->get("coin_coff_sell", 0.01));
 	}
 	public static function getLang(): Config {
 		if (self::$lang === null) {
@@ -123,22 +123,22 @@ final class API extends PluginBase implements Listener {
 
 	public static function registerCurrency(Currency $currency, string $pluginName = null): void {
 		if ($pluginName === null) $pluginName = self::$pluginName;
-		self::$currences[strtolower($currency->getName())] = $currency;
+		self::$currencies[strtolower($currency->getName())] = $currency;
 		Server::getInstance()->getCommandMap()->register($pluginName, new CurrencyCommand($currency, self::$instance));
 	}
-	public static function getCurrences(): array {
-		return self::$currences;
+	public static function getCurrencies(): array {
+		return self::$currencies;
 	}
 	public static function getCurrencyByName(string $name): ?Currency {
-		if (isset(self::$currences[strtolower($name)])) return self::$currences[strtolower($name)];
+		if (isset(self::$currencies[strtolower($name)])) return self::$currencies[strtolower($name)];
 		return null;
 	}
 	public static function existCurrency(string $name): bool {
 		$null = false;
-		if (is_null(self::$currences[strtolower($name)])) $null = true;
+		if (is_null(self::$currencies[strtolower($name)])) $null = true;
 
 		$is_currency = false;
-		if (self::$currences[strtolower($name)] instanceof Currency) $is_currency = true;
+		if (self::$currencies[strtolower($name)] instanceof Currency) $is_currency = true;
 		
 		if ($null == false && $is_currency == true) {
 			return true;

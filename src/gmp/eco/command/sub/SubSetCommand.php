@@ -40,6 +40,6 @@ class SubSetCommand extends BaseSubCommand {
 			return;
 		}
 		$target->set($this->currency->getName(), $count);
-		$sender->sendMessage("§l§a{$count}{$this->currency->getSing()} seted to player {$target->getName()}");
+		$sender->sendMessage("§l§a{$count}{$this->currency->getSing()} set to player {$target->getName()}");
 	}
 }

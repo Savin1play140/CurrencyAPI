@@ -24,13 +24,13 @@ final class SubForm {
 					return;
 				}
 				$sender->remove($currency->getName(), round($count, 2));
-				$sender->add($currency->getExchangable(), round($currency->getPrice()*$count, 2));
+				$sender->add($currency->getExchangeable(), round($currency->getPrice()*$count, 2));
 				$currency->onSell(round($count, 2));
 			}
 		);
 		$form->setTitle($name);
 		$form->addLabel($content);
-		$form->addInput("count", "Ineger only", "1000");
+		$form->addInput("count", "Integer only", "1000");
 		$form->sendToPlayer($player);
 	}
 	// buy
@@ -44,18 +44,18 @@ final class SubForm {
 					$sender->sendMessage("You can't buy more 1,000,000");
 					return;
 				}
-				if ($sender->get($currency->getExchangable()) < round($currency->getPrice()*$count, 2)) {
-					$sender->sendMessage("you're missing ".$currency->getExchangable().", count: ".number_format($currency->getPrice()*$count-$sender->get($currency->getExchangable()), 0, ".", ","));
+				if ($sender->get($currency->getExchangeable()) < round($currency->getPrice()*$count, 2)) {
+					$sender->sendMessage("you're missing ".$currency->getExchangeable().", count: ".number_format($currency->getPrice()*$count-$sender->get($currency->getExchangeable()), 0, ".", ","));
 					return;
 				}
-				$sender->remove($currency->getExchangable(), round($currency->getPrice()*$count, 2));
+				$sender->remove($currency->getExchangeable(), round($currency->getPrice()*$count, 2));
 				$sender->add($currency->getName(), round($count, 2));
 				$currency->onBuy(round($count, 2));
 			}
 		);
 		$form->setTitle($name);
 		$form->addLabel($content);
-		$form->addInput("count", "Ineger only", "1000");
+		$form->addInput("count", "Integer only", "1000");
 		$form->sendToPlayer($player);
 	}
 }

@@ -2,6 +2,11 @@
 Two-way economic A.P.I. to create currencies on the one hand, and on the other the usual economic plugin PMMP-5
 [README RU](README_RU.md)
 
+# What next?
+	- [ ] Currency count limit
+	- [ ] Currency buy/sell limit
+	- [ ] Save player balance to SQL database
+
 # For create currency
 Main:
 ```php
@@ -24,7 +29,7 @@ class YourCurrency implements Currency {
 	public function getPrice(): float {
 		return 1;
 	}
-	public function getExchangable(): string {
+	public function getExchangeable(): string {
 		return "Dollar";
 	}
 	public function onBuy(float $count): void { /* code */ }

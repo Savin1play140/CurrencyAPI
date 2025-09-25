@@ -116,9 +116,9 @@ final class Player extends PPlayer {
 		$currencyName = strtolower($currencyName);
 		if (!$this->haveCurrency($currencyName)) return false;
 
-		$succsesful = $this->remove($currencyName, $count);
-		$currency = API::getCurrenceByName($currencyName);
-		if ($succsesful) {
+		$successfully = $this->remove($currencyName, $count);
+		$currency = API::getCurrencyByName($currencyName);
+		if ($successfully) {
 			if (!is_null($callable0)) $callable0($currency);
 		} else {
 			if (!is_null($callable1)) $callable1($currency);

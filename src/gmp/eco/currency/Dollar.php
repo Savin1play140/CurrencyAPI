@@ -5,7 +5,7 @@ class Dollar implements Currency {
 	public function getPrice(): float {
         return 1.0;
     }
-	public function getExchangable(): string {
+	public function getExchangeable(): string {
 		return "Dollar";
 	}
 	public function onBuy(float $count): void {}
