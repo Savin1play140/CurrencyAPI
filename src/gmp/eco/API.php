@@ -12,7 +12,7 @@ use gmp\eco\command\CurrencyCommand;
 use gmp\eco\currency\{Dollar, CoinIO, Currency};
 use gmp\eco\player\Player;
 
-use CortexPE\Commando\PacketHooker;
+use gmp\eco\command\api\PacketHooker;
 
 final class API extends PluginBase implements Listener {
 	private int $dollarPrice = 1;
