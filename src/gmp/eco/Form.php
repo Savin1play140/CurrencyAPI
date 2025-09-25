@@ -3,7 +3,7 @@ namespace gmp\eco;
 
 use pocketmine\player\Player;
 
-use jojoe77777\FormAPI\SimpleForm;
+use gmp\eco\form\SimpleForm;
 
 use gmp\eco\currency\{Currency, Dollar};
 

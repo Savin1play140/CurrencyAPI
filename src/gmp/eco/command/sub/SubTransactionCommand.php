@@ -1,8 +1,8 @@
 <?php
 namespace gmp\eco\command\sub;
 
-use CortexPE\Commando\BaseSubCommand;
-use CortexPE\Commando\args\{RawStringArgument, FloatArgument};
+use gmp\eco\command\api\BaseSubCommand;
+use gmp\eco\command\api\args\{RawStringArgument, FloatArgument};
 
 use pocketmine\command\{Command, CommandSender};
 use pocketmine\permission\DefaultPermissions;

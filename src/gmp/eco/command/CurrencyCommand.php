@@ -1,7 +1,7 @@
 <?php
 namespace gmp\eco\command;
 
-use CortexPE\Commando\BaseCommand;
+use gmp\eco\command\api\BaseCommand;
 
 use pocketmine\command\{Command, CommandSender};
 use pocketmine\plugin\{PluginOwned, Plugin};
