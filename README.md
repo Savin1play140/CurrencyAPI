@@ -1,8 +1,9 @@
 # CurrencyAPI | PocketMine-MP
-Two-way economic A.P.I. to create currencies on the one hand, and on the other the usual economic plugin PMMP-5
+Two-way economic A.P.I. to create currencies on the one hand, and on the other the usual economic plugin PocketMine-MP 5
 [README RU](README_RU.md)
 
 # What next?
+Next steps:
 	- [ ] Currency count limit
 	- [ ] Currency buy/sell limit
 	- [ ] Save player balance to SQL database
@@ -14,7 +15,7 @@ use gmp\eco\API;
 
 
 	/* ... */
-		API::registerCurrency(new YourCurrency(), $main->getName());
+		API::registerCurrency($main->getName(), new YourCurrency());
 	/* ... */
 ```
 Instead of YourCurrency the class of your currency

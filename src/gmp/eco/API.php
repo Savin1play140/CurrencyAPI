@@ -1,7 +1,6 @@
 <?php
 namespace gmp\eco;
 
-use pocketmine\event\player\{PlayerJoinEvent, PlayerMoveEvent, PlayerQuitEvent, PlayerCreationEvent};
 use pocketmine\plugin\PluginBase;
 use pocketmine\event\Listener;
 use pocketmine\plugin\Plugin;
@@ -14,22 +13,31 @@ use gmp\eco\player\Player;
 
 use gmp\eco\command\api\PacketHooker;
 
-final class API extends PluginBase implements Listener {
+final class API {
 	private int $dollarPrice = 1;
 	private static array $currencies = [];
+	private static array $pluginsOfCurrencies = [];
 	private static \AttachableLogger $logger;
 	private static ?API $instance = null;
 	private static Config $api_config;
 	private static Config $lang;
 	private static string $pluginName = "";
 
-	
-	public function onEnable(): void {
-		@mkdir($this->getDataFolder());
-		@mkdir($this->getDataFolder()."lang/");
-		@mkdir($this->getDataFolder()."players/");
+	public function __construct(
+		private PluginEP $main
+	) {}
+
+
+	public function getMain(): PluginEP { return $this->main; }
+
+
+	public function init(\AttachableLogger $logger): void {
+		@mkdir($this->main->getDataFolder());
+		@mkdir($this->main->getDataFolder()."lang/");
+		@mkdir($this->main->getDataFolder()."players/");
+
 		self::$api_config = new Config(
-			$this->getDataFolder()."settings.yml",
+			$this->main->getDataFolder()."settings.yml",
 			Config::YAML,
 			[
 				"lang" => "EN_US",
@@ -37,9 +45,11 @@ final class API extends PluginBase implements Listener {
 				"coin_coff_sell" => "0.0025"
 			]
 		);
-		$this->getLogger()->info("Config dir: ".($this->getDataFolder()."settings.yml"));
+
+		$logger->info("Config file: ".($this->main->getDataFolder()."settings.yml"));
+
 		self::$lang = new Config(
-			$this->getDataFolder()."lang/".self::$api_config->get("lang", "EN_US").".json",
+			$this->main->getDataFolder()."lang/".self::$api_config->get("lang", "EN_US").".json",
 			Config::JSON,
 			[
 				"command" => [
@@ -66,74 +76,57 @@ final class API extends PluginBase implements Listener {
 			]
 		);
 		self::$instance = $this;
-		self::$logger = $this->getLogger();
-		self::$pluginName = $this->getName();
-		$this->getServer()->getPluginManager()->registerEvents($this, $this);
-
+		self::$logger = $logger;
+		self::$pluginName = $this->main->getName();
 
 		self::registerCurrency(new Dollar());
 		self::registerCurrency(new CoinIO());
+
 		if(!PacketHooker::isRegistered()) {
-			PacketHooker::register($this);
+			PacketHooker::register($this->main);
 		}
-		$this->getLogger()->info("Configured language: ".self::$api_config->get("lang", "EN_US"));
-		$this->getLogger()->info("CoinIO coefficient for \"Buy\": ".self::$api_config->get("coin_coff_buy", 0.01));
-		$this->getLogger()->info("CoinIO coefficient for \"Sell\": ".self::$api_config->get("coin_coff_sell", 0.01));
+
+		$logger->info("Configured language: ".self::$api_config->get("lang", "EN_US"));
+		$logger->info("CoinIO coefficient for \"Buy\": ".self::$api_config->get("coin_coff_buy", 0.01));
+		$logger->info("CoinIO coefficient for \"Sell\": ".self::$api_config->get("coin_coff_sell", 0.01));
+
 	}
+
+
 	public static function getLang(): Config {
-		if (self::$lang === null) {
-			self::$lang = new Config($this->getDataFolder()."lang/".self::$api_config->get("lang", "EN_US").".json");
-		}
+		if (self::$lang === null) self::$lang = new Config($this->main->getDataFolder()."lang/".self::$api_config->get("lang", "EN_US").".json");
 		return self::$lang;
 	}
+
+
 	public static function getAPIConfig(): Config {
-		if (self::$api_config === null) {
-			self::$api_config = new Config($this->getDataFolder()."settings.yml", Config::YAML);
-		}
+		if (self::$api_config === null) self::$api_config = new Config($this->main->getDataFolder()."settings.yml", Config::YAML);
 		return self::$api_config;
 	}
-	public function onCreation(PlayerCreationEvent $event): void {
-		$event->setBaseClass(Player::class);
-		$event->setPlayerClass(Player::class);
-	}
-	public function onJoin(PlayerJoinEvent $event): void {
-		$player = $event->getPlayer();
-		$config = new Config($this->getDataFolder()."players/".$player->getName().".json",Config::JSON);
-		$config->setDefaults(["dollar" => 100]);
-		$player->Init($this, $config);
-		$this->getLogger()->debug("Player use class: ".get_class($player));
-	}
-	public static function getFolder(): string {
-		return self::$instance->getDataFolder();
-	}
-	public function playerQuit(PlayerQuitEvent $event): void {
-		$player = $event->getPlayer();
-		$this->PlayerQ($player);
-	}
-	private function PlayerQ(Player $player): void {
+
+
+	public function PlayerQ(Player $player): void {
 		$player->removeCurrentWindow();
 		$player->saveConfig();
 	}
 
-	public function onDisable(): void {
-		foreach ($this->getServer()->getOnlinePlayers() as $player) {
-			$this->PlayerQ($player);
-		}
-	}
 
-	public static function registerCurrency(Currency $currency, string $pluginName = null): void {
-		if ($pluginName === null) $pluginName = self::$pluginName;
+	public static function registerCurrency(string $pluginName, Currency $currency): void {
 		self::$currencies[strtolower($currency->getName())] = $currency;
+		self::$pluginsOfCurrencies[$currency->getName()] = $pluginName;
 		Server::getInstance()->getCommandMap()->register($pluginName, new CurrencyCommand($currency, self::$instance));
 	}
+
 	public static function getCurrencies(): array {
 		return self::$currencies;
 	}
+
 	public static function getCurrencyByName(string $name): ?Currency {
 		if (isset(self::$currencies[strtolower($name)])) return self::$currencies[strtolower($name)];
 		return null;
 	}
-	public static function existCurrency(string $name): bool {
+
+	public static function existsCurrency(string $name): bool {
 		$null = false;
 		if (is_null(self::$currencies[strtolower($name)])) $null = true;
 
@@ -146,6 +139,17 @@ final class API extends PluginBase implements Listener {
 			return false;
 		}
 	}
+
+
+	public static function getPluginNameByCurrencyName(string $currency) : string {
+		return self::$pluginsOfCurrencies[$currency];
+	}
+
+	public static function getPluginNameByCurrency(Currency $currency) : str {
+		return self::getPluginNameByCurrencyName($currency->getName());
+	}
+
+
 	public static function Logger(): \AttachableLogger {
 		return self::$logger;
 	}

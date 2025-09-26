@@ -19,7 +19,7 @@ final class Player extends PPlayer {
 
 	public function haveCurrency(string $name): bool {
 		$name = strtolower($name);
-		if (!API::existCurrency($name)) return false;
+		if (!API::existsCurrency($name)) return false;
 		if ($this->save->get($name) === null) return false;
 		return true;
 	}
@@ -32,7 +32,7 @@ final class Player extends PPlayer {
 	}
 	public function set(string $currencyName, float $count): void {
 		$currencyName = strtolower($currencyName);
-		if (!API::existCurrency($currencyName)) return;
+		if (!API::existsCurrency($currencyName)) return;
 		$this->save->set($currencyName, $count);
 		$sing = API::getCurrencyByName($currencyName)->getSing();
 		$this->sendActionBarMessage(
@@ -50,7 +50,7 @@ final class Player extends PPlayer {
 
 	public function add(string $currencyName, float $count): void {
 		$currencyName = strtolower($currencyName);
-		if (!API::existCurrency($currencyName)) return;
+		if (!API::existsCurrency($currencyName)) return;
 		$this->set($currencyName, $this->get($currencyName)+$count);
 		$sing = API::getCurrencyByName($currencyName)->getSing();
 		$this->sendActionBarMessage(
@@ -71,6 +71,7 @@ final class Player extends PPlayer {
 	}
 	public function remove(string $currencyName, float $count, bool $no_message = false): bool {
 		$currencyName = strtolower($currencyName);
+		if (!API::existsCurrency($currencyName)) return false;
 		if (!$this->haveCurrency($currencyName)) {
 			$this->sendActionBarMessage(
 				API::getLang()->getNested("player.nocurrency")
@@ -114,6 +115,7 @@ final class Player extends PPlayer {
 	}
 	public function purchase(string $currencyName, float $count, ?callable $callable0, ?callable $callable1) {
 		$currencyName = strtolower($currencyName);
+		if (!API::existsCurrency($currencyName)) return false;
 		if (!$this->haveCurrency($currencyName)) return false;
 
 		$successfully = $this->remove($currencyName, $count);

@@ -21,7 +21,7 @@ class CurrencyCommand extends BaseCommand implements PluginOwned {
 		public API $API
 	) {
 		parent::__construct(
-			$this->API,
+			$this->API->getMain(),
 			mb_strtolower($this->currency->getName(), "UTF-8"),
 			str_replace("{command.name}", $this->currency->getName(), API::getLang()->getNested("command.about"))
 		);
@@ -41,7 +41,7 @@ class CurrencyCommand extends BaseCommand implements PluginOwned {
 		$currency = $this->currency;
 		$sing = API::getCurrencyByName($this->currency->getExchangeable())->getSing();
 		Form::sendSelf(
-			"§l".$name." [".$this->API->getName()."]",
+			"§l".$name." [".$this->API->getPluginNameByCurrency($currency)."]",
 			"§l".$name." price: ".number_format($currency->getPrice(), 2, ".", ",").$sing."\nYou have: ".number_format($sender->get($name), 2, ".", ",").$currency->getSing(),
 			$sender,
 			$this->currency

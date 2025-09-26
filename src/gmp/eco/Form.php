@@ -9,21 +9,23 @@ use gmp\eco\currency\{Currency, Dollar};
 
 final class Form {
 	public static function sendSelf(string $name, string $content, Player $player, Currency $currency): void {
+		$SellBttIndex = $currency->isSalable() ? 0 : -1;
+		$BuyBttIndex =  $currency->isSalable() ? 1 : 0;
+
 		$form = new SimpleForm(
-			function (Player $sender, ?int $data) use ($name, $content, $currency) {
+			function (Player $sender, ?int $data) use ($name, $content, $currency, $SellBttIndex, $BuyBttIndex) {
 				if(is_null($data)) return;
 				switch($data) {
-					case 0:
+					case $SellBttIndex:
 						// Button 1
 						SubForm::send0($name, $content, $sender, $currency);
 						break;
-					case 1:
+					case $BuyBttIndex:
 						// Button 2
 						SubForm::send1($name, $content, $sender, $currency);
 						break;
 					default:
 						// Form closed
-						API::Logger()->info($sender->getName()."\'s close form");
 						break;
 				}
 			}

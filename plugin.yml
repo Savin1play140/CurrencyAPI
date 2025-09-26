@@ -1,4 +1,4 @@
 name: CurrencyAPI
-main: gmp\eco\API
+main: gmp\eco\PluginEP
 version: 1.5-2
 api: 5.0.0

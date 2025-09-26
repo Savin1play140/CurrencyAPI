@@ -1,6 +1,11 @@
 # CurrencyAPI | PocketMine-MP
-Двухсторонний экономический A.P.I. для создания валют с одной стороны, а с другой обычный экономический плагин PMMP-5
+Двухсторонний экономический A.P.I. для создания валют с одной стороны, а с другой обычный экономический плагин PocketMine-MP 5
 
+# Что потом?
+Далее:
+	- [ ] Лимит на количество валюты
+	- [ ] Лимит на транзакцию
+	- [ ] Сохранение баланса игрока в базе данных SQL
 # Для создания валюты
 Main:
 ```php
@@ -8,7 +13,7 @@ use gmp\eco\API;
 
 
 	/* ... */
-		API::registerCurrency(new YourCurrency(), $main->getName());
+		API::registerCurrency($main->getName(), new YourCurrency());
 	/* ... */
 ```
 Вместо YourCurrency класс вашей валюты
@@ -23,7 +28,7 @@ class YourCurrency implements Currency {
 	public function getPrice(): float {
 		return 1;
 	}
-	public function getExchangable(): string {
+	public function getExchangeable(): string {
 		return "Dollar";
 	}
 	public function onBuy(float $count): void { /* code */ }

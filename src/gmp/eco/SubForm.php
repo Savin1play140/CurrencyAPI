@@ -13,18 +13,23 @@ final class SubForm {
 		$form = new CustomForm(
 			function (Player $sender, ?array $data) use ($currency) {
 				if(is_null($data)) return;
+				if (!$currency->isSalable()) {
+					$sender->sendMessage("You can't sell");
+					return;
+				}
 				$count = (float)$data[1];
-				if ($count < 1 or is_null($count)) return;
+				if ($count <= 0 or is_null($count)) return;
 				if ($count > 1000000) {
 					$sender->sendMessage("You can't sell more 1,000,000");
 					return;
 				}
 				if (round($sender->get($currency->getName()), 2) < round($count, 2)) {
 					$sender->sendMessage("you're missing ".$currency->getName().", count: ".number_format($count-$sender->get($currency->getName()), 0, ".", ","));
+					$sender->sendMessage("for selling ".$currency->getName()."(".$currency->getSing().")");
 					return;
 				}
 				$sender->remove($currency->getName(), round($count, 2));
-				$sender->add($currency->getExchangeable(), round($currency->getPrice()*$count, 2));
+				$sender->add($currency->getExchangeable(), round(round($currency->getPrice(), 2)*$count, 2));
 				$currency->onSell(round($count, 2));
 			}
 		);
@@ -38,17 +43,22 @@ final class SubForm {
 		$form = new CustomForm(
 			function (Player $sender, ?array $data) use ($currency) {
 				if(is_null($data)) return;
+				if (!$currency->isBuyable()) {
+					$sender->sendMessage("You can't buy");
+					return;
+				}
 				$count = round($data[1], 2);
-				if ($count < 1 or is_null($count)) return;
+				if ($count <= 0 or is_null($count)) return;
 				if ($count > 1000000) {
 					$sender->sendMessage("You can't buy more 1,000,000");
 					return;
 				}
-				if ($sender->get($currency->getExchangeable()) < round($currency->getPrice()*$count, 2)) {
-					$sender->sendMessage("you're missing ".$currency->getExchangeable().", count: ".number_format($currency->getPrice()*$count-$sender->get($currency->getExchangeable()), 0, ".", ","));
+				if ($sender->get($currency->getExchangeable()) < round(round($currency->getPrice(), 2)*$count, 2)) {
+					$sender->sendMessage("you're missing ".$currency->getExchangeable().", count: ".number_format(round(round($currency->getPrice(), 2)*$count, 2)-$sender->get($currency->getExchangeable()), 0, ".", ","));
+					$sender->sendMessage("for buying ".$currency->getName()."(".$currency->getSing().")");
 					return;
 				}
-				$sender->remove($currency->getExchangeable(), round($currency->getPrice()*$count, 2));
+				$sender->remove($currency->getExchangeable(), round(round($currency->getPrice(), 2)*$count, 2));
 				$sender->add($currency->getName(), round($count, 2));
 				$currency->onBuy(round($count, 2));
 			}
