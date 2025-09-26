@@ -14,14 +14,12 @@ use gmp\eco\player\Player;
 use gmp\eco\command\api\PacketHooker;
 
 final class API {
-	private int $dollarPrice = 1;
 	private static array $currencies = [];
 	private static array $pluginsOfCurrencies = [];
 	private static \AttachableLogger $logger;
 	private static ?API $instance = null;
 	private static Config $api_config;
 	private static Config $lang;
-	private static string $pluginName = "";
 
 	public function __construct(
 		private PluginEP $main
@@ -79,8 +77,8 @@ final class API {
 		self::$logger = $logger;
 		self::$pluginName = $this->main->getName();
 
-		self::registerCurrency(new Dollar());
-		self::registerCurrency(new CoinIO());
+		self::registerCurrency($this->main->getName(), new Dollar());
+		self::registerCurrency($this->main->getName(), new CoinIO());
 
 		if(!PacketHooker::isRegistered()) {
 			PacketHooker::register($this->main);
@@ -94,13 +92,13 @@ final class API {
 
 
 	public static function getLang(): Config {
-		if (self::$lang === null) self::$lang = new Config($this->main->getDataFolder()."lang/".self::$api_config->get("lang", "EN_US").".json");
+		if (self::$lang == null) self::$lang = new Config(self::$instance->main->getDataFolder()."lang/".self::$api_config->get("lang", "EN_US").".json");
 		return self::$lang;
 	}
 
 
 	public static function getAPIConfig(): Config {
-		if (self::$api_config === null) self::$api_config = new Config($this->main->getDataFolder()."settings.yml", Config::YAML);
+		if (self::$api_config == null) self::$api_config = new Config(self::$instance->main->getDataFolder()."settings.yml", Config::YAML);
 		return self::$api_config;
 	}
 
@@ -145,7 +143,7 @@ final class API {
 		return self::$pluginsOfCurrencies[$currency];
 	}
 
-	public static function getPluginNameByCurrency(Currency $currency) : str {
+	public static function getPluginNameByCurrency(Currency $currency) : string {
 		return self::getPluginNameByCurrencyName($currency->getName());
 	}
 

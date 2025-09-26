@@ -11,7 +11,7 @@ final class Player extends PPlayer {
 	private ?API $API = null;
 	private Config $save;
 
-	public function Init(API $API, Config $conf): void {
+	public function init(API $API, Config $conf): void {
 		$this->username = str_replace(" ", "_", $this->getName());
 		$this->API = $API;
 		$this->save = $conf;

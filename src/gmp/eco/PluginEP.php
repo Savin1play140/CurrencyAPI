@@ -27,19 +27,22 @@ final class PluginEP extends PluginBase implements Listener {
 
 	public function onJoin(PlayerJoinEvent $event): void {
 		$player = $event->getPlayer();
+		if (!($player instanceof Player)) return;
 		$config = new Config($this->getDataFolder()."players/".$player->getName().".json", Config::JSON);
 		$config->setDefaults(["dollar" => 100]);
-		$player->Init($this->api, $config);
+		$player->init($this->api, $config);
 		$this->getLogger()->debug("Player use class: ".get_class($player));
 	}
 
 	public function playerQuit(PlayerQuitEvent $event): void {
 		$player = $event->getPlayer();
+		if (!($player instanceof Player)) return;
 		$this->api->PlayerQ($player);
 	}
 
 	public function onDisable(): void {
 		foreach ($this->getServer()->getOnlinePlayers() as $player) {
+			if (!($player instanceof Player)) continue;
 			$this->api->PlayerQ($player);
 		}
 	}
