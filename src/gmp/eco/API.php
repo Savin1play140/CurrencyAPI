@@ -75,7 +75,6 @@ final class API {
 		);
 		self::$instance = $this;
 		self::$logger = $logger;
-		self::$pluginName = $this->main->getName();
 
 		self::registerCurrency($this->main->getName(), new Dollar());
 		self::registerCurrency($this->main->getName(), new CoinIO());
