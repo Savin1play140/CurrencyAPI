@@ -4,15 +4,14 @@ Two-way economic A.P.I. to create currencies on the one hand, and on the other t
 
 # What next?
 Next steps:
-	- [ ] Currency count limit
-	- [ ] Currency buy/sell limit
-	- [ ] Save player balance to SQL database
+    - [ ] Currency count limit
+    - [ ] Currency buy/sell limit
+    - [ ] Save player balance to SQL database
 
 # For create currency
 Main:
 ```php
 use gmp\eco\API;
-
 
 	/* ... */
 		API::registerCurrency($main->getName(), new YourCurrency());
