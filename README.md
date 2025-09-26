@@ -3,7 +3,7 @@ Two-way economic A.P.I. to create currencies on the one hand, and on the other t
 [README RU](README_RU.md)
 
 # What next?
-Next steps:
+  - Next steps:
     - [ ] Currency count limit
     - [ ] Currency buy/sell limit
     - [ ] Save player balance to SQL database
