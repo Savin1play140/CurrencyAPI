@@ -5,6 +5,7 @@ use pocketmine\player\Player as PPlayer;
 use pocketmine\utils\Config;
 use pocketmine\lang\Translatable;
 
+use gmp\eco\event\{AddEvent, RemoveEvent, SetEvent, TransactionEvent};
 use gmp\eco\API;
 
 final class Player extends PPlayer {
@@ -28,14 +29,23 @@ final class Player extends PPlayer {
 	public function get(string $currencyName): float {
 		$currencyName = strtolower($currencyName);
 		if (!$this->haveCurrency($currencyName)) return 0;
+
 		return round($this->save->get($currencyName), 2);
 	}
-	public function set(string $currencyName, float $count): void {
+	public function set(string $currencyName, float $count, bool $message = true, bool $event = true): void {
 		$currencyName = strtolower($currencyName);
 		if (!API::existsCurrency($currencyName)) return;
+
+		if ($event) {
+			$event = new SetEvent($this, $count, API::getCurrencyByName($currencyName));
+			$event->call();
+			if ($event->isCancelled()) return;
+		}
+
 		$this->save->set($currencyName, $count);
+
 		$sing = API::getCurrencyByName($currencyName)->getSing();
-		$this->sendActionBarMessage(
+		if ($message) $this->sendActionBarMessage(
 			str_replace(
 				"{count}",
 				number_format($count, 2, ".", ","),
@@ -48,12 +58,21 @@ final class Player extends PPlayer {
 		);
 	}
 
-	public function add(string $currencyName, float $count): void {
+	public function add(string $currencyName, float $count, bool $message = true, bool $event = true): bool {
 		$currencyName = strtolower($currencyName);
-		if (!API::existsCurrency($currencyName)) return;
-		$this->set($currencyName, $this->get($currencyName)+$count);
-		$sing = API::getCurrencyByName($currencyName)->getSing();
-		$this->sendActionBarMessage(
+		if (!API::existsCurrency($currencyName)) return false;
+		$currency = API::getCurrencyByName($currencyName);
+
+		if ($event) {
+			$event = new AddEvent($this, $count, $currency);
+			$event->call();
+			if ($event->isCancelled()) return false;
+		}
+
+		$this->set($currencyName, $this->get($currencyName)+$count, false, false);
+		$sing = $currency->getSing();
+
+		if ($message) $this->sendActionBarMessage(
 			str_replace(
 				"{count}",
 				number_format($count, 2, ".", ","),
@@ -68,20 +87,23 @@ final class Player extends PPlayer {
 				)
 			)
 		);
+		return true;
 	}
-	public function remove(string $currencyName, float $count, bool $no_message = false): bool {
+	public function remove(string $currencyName, float $count, bool $message = true, bool $event = true): bool {
 		$currencyName = strtolower($currencyName);
 		if (!API::existsCurrency($currencyName)) return false;
+
 		if (!$this->haveCurrency($currencyName)) {
-			$this->sendActionBarMessage(
+			if ($message) $this->sendActionBarMessage(
 				API::getLang()->getNested("player.nocurrency")
 			);
 			return false;
 		}
+
 		$boolean = $this->get($currencyName) < $count;
 		if ($boolean) {
 			$sing = API::getCurrencyByName($currencyName)->getSing();
-			$this->sendActionBarMessage(
+			if (!$message) $this->sendMessage(
 				str_replace(
 					"{missing}",
 					number_format($count-$this->get($currencyName), 2, ".", ","),
@@ -94,9 +116,18 @@ final class Player extends PPlayer {
 			);
 			return false;
 		}
-		$this->set($currencyName, $this->get($currencyName)-$count);
+
+		if ($event) {
+			$event = new RemoveEvent($this, $count, API::getCurrencyByName($currencyName));
+			$event->call();
+			if ($event->isCancelled()) return false;
+		}
+
+		$this->set($currencyName, $this->get($currencyName)-$count, false, false);
+
 		$sing = API::getCurrencyByName($currencyName)->getSing();
-		if (!$no_message) $this->sendActionBarMessage(
+
+		if (!$message) $this->sendMessage(
 			str_replace(
 				"{count}",
 				number_format($count, 2, ".", ","),
@@ -126,7 +157,13 @@ final class Player extends PPlayer {
 			if (!is_null($callable1)) $callable1($currency);
 		}
 	}
-	public function transaction(string $currencyName, float $count, Player $player): bool {
+	public function transaction(string $currencyName, float $count, Player $player, bool $event = true): bool {
+		if ($event) {
+			$event = new TransactionEvent($this, $count, API::getCurrencyByName($currencyName));
+			$event->call();
+			if ($event->isCancelled()) return false;
+		}
+
 		if ($this->remove($currencyName, $count, true)) {
 			$player->add($currencyName, $count);
 			return true;

@@ -6,7 +6,8 @@ Two-way economic A.P.I. to create currencies on the one hand, and on the other t
   - Next steps:
     - [ ] Currency count limit
     - [ ] Currency buy/sell limit
-    - [ ] Save player balance to SQL database
+    - [ ] Saving player balance to SQL database
+	- [ ] Saving currency price
 
 # For create currency
 Main:
@@ -45,7 +46,7 @@ class YourCurrency implements Currency {
 	public function isSalable(): bool { return true; }
 }
 ```
-# For use economy
+# For use economic side:
 ```php
 // To add a player's currency to the balance
 $target->add($currency->getName(), $count);

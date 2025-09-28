@@ -78,7 +78,7 @@ class CustomForm extends Form {
      * @param string|null $label
      * @return $this
      */
-    public function addToggle(string $text, bool $default = null, ?string $label = null) : self {
+    public function addToggle(string $text, bool $default = false, ?string $label = null) : self {
         $content = ["type" => "toggle", "text" => $text];
         if($default !== null) {
             $content["default"] = $default;
@@ -137,7 +137,7 @@ class CustomForm extends Form {
      * @param string|null $label
      * @return $this
      */
-    public function addDropdown(string $text, array $options, int $default = null, ?string $label = null) : self {
+    public function addDropdown(string $text, array $options, int $default = 0, ?string $label = null) : self {
         $this->addContent(["type" => "dropdown", "text" => $text, "options" => $options, "default" => $default]);
         $this->labelMap[] = $label ?? count($this->labelMap);
         $this->validationMethods[] = static fn($v) => is_int($v) && isset($options[$v]);
@@ -151,7 +151,7 @@ class CustomForm extends Form {
      * @param string|null $label
      * @return $this
      */
-    public function addInput(string $text, string $placeholder = "", string $default = null, ?string $label = null) : self {
+    public function addInput(string $text, string $placeholder = "", string $default = "", ?string $label = null) : self {
         $this->addContent(["type" => "input", "text" => $text, "placeholder" => $placeholder, "default" => $default]);
         $this->labelMap[] = $label ?? count($this->labelMap);
         $this->validationMethods[] = static fn($v) => is_string($v);

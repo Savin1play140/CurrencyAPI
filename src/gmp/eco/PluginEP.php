@@ -45,5 +45,7 @@ final class PluginEP extends PluginBase implements Listener {
 			if (!($player instanceof Player)) continue;
 			$this->api->PlayerQ($player);
 		}
+		foreach (API::getCurrencies() as $name => $currency) {
+		}
 	}
 }

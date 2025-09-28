@@ -10,7 +10,11 @@ use pocketmine\permission\DefaultPermissions;
 use gmp\eco\player\Player;
 use gmp\eco\{API, Form};
 use gmp\eco\currency\Currency;
-use gmp\eco\command\sub\{SubSetCommand, SubAddCommand, SubRemoveCommand, SubTransactionCommand};
+use gmp\eco\command\sub\{
+	BuySubCommand, SellSubCommand,
+	SubSetCommand, SubAddCommand,
+	SubRemoveCommand, SubTransactionCommand
+};
 
 class CurrencyCommand extends BaseCommand implements PluginOwned {
 	public function getOwningPlugin(): Plugin {
@@ -29,6 +33,8 @@ class CurrencyCommand extends BaseCommand implements PluginOwned {
 	}
 
 	protected function prepare(): void {
+		$this->registerSubCommand(new BuySubCommand($this->currency, $this->API));
+		$this->registerSubCommand(new SellSubCommand($this->currency, $this->API));
 		$this->registerSubCommand(new SubSetCommand($this->currency, $this->API));
 		$this->registerSubCommand(new SubAddCommand($this->currency, $this->API));
 		$this->registerSubCommand(new SubRemoveCommand($this->currency, $this->API));
