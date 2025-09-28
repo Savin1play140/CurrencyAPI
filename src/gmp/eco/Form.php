@@ -9,8 +9,12 @@ use gmp\eco\currency\{Currency, Dollar};
 
 final class Form {
 	public static function sendSelf(string $name, string $content, Player $player, Currency $currency): void {
-		$SellBttIndex = $currency->isSalable() ? 0 : -1;
+		$SellBttIndex = $currency->isSalable() ? 0 : -2;
 		$BuyBttIndex =  $currency->isSalable() ? 1 : 0;
+		$BuyBttIndex =  $currency->isBuyable() ? $BuyBttIndex : -1;
+
+		if (API::getPlayerManager()->getBoughtCurrency($currency->getName()) >= $currency->maxCount())
+			$BuyBttIndex = -1;
 
 		$form = new SimpleForm(
 			function (Player $sender, ?int $data) use ($name, $content, $currency, $SellBttIndex, $BuyBttIndex) {
@@ -32,8 +36,8 @@ final class Form {
 		);
 		$form->setTitle($name);
 		$form->setContent($content);
-		if ($currency->isSalable()) $form->addButton("Sell");
-		if ($currency->isBuyable()) $form->addButton("Buy");
+		if ($SellBttIndex >= 0) $form->addButton("Sell");
+		if ($BuyBttIndex >= 0) $form->addButton("Buy");
 		$form->sendToPlayer($player);
 	}
 }

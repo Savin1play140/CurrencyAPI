@@ -20,6 +20,7 @@ final class SubForm {
 				}
 				$count = (float)$data[1];
 				if ($count <= 0 or is_null($count)) return;
+				if ($currency->sellLimit() < $count) return;
 
 				if (round($sender->get($currency->getName()), 2) < round($count, 2)) {
 					$sender->sendMessage("you're missing ".$currency->getName().", count: ".number_format($count-$sender->get($currency->getName()), 0, ".", ","));
@@ -60,11 +61,14 @@ final class SubForm {
 
 	// buy
 	public static function send1(string $name, string $content, Player $player, Currency $currency): void {
-		$sing = API::getCurrencyByName($currency->getExchangeable())->getSing();
-		$content = "§l".$currency->getName()." price: ".number_format($currency->getPrice(), 2, ".", ",").$currency->getSing().
-			"\nYou have: ".number_format($player->get($currency->getExchangeable()), 2, ".", ",").$sing.
+		$exchangeable = API::getCurrencyManager()->getCurrencyByName($currency->getExchangeable());
+		$sing = $exchangeable->getSing();
+
+		$content = "§l".$currency->getName()." price: ".number_format($currency->getPrice(), 2, ".", ",").$exchangeable->getSing().
+			"\nYou have: ".number_format($player->get($exchangeable->getName()), 2, ".", ",").$sing.
 			"\n     and: ".number_format($player->get($currency->getName()), 2, ".", ",").$currency->getSing();
-		$form = new CustomForm(
+
+			$form = new CustomForm(
 			function (Player $sender, ?array $data) use ($currency) {
 				if(is_null($data)) return;
 				if (!$currency->isBuyable()) {
@@ -73,6 +77,7 @@ final class SubForm {
 				}
 				$count = round($data[1], 2);
 				if ($count <= 0 or is_null($count)) return;
+				if ($currency->buyLimit() < $count) return;
 
 				if ($sender->get($currency->getExchangeable()) < round(round($currency->getPrice(), 2)*$count, 2)) {
 					$sender->sendMessage("you're missing ".$currency->getExchangeable().", count: ".number_format(round(round($currency->getPrice(), 2)*$count, 2)-$sender->get($currency->getExchangeable()), 0, ".", ","));

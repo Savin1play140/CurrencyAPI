@@ -20,7 +20,7 @@ final class Player extends PPlayer {
 
 	public function haveCurrency(string $name): bool {
 		$name = strtolower($name);
-		if (!API::existsCurrency($name)) return false;
+		if (!API::getCurrencyManager()->existsCurrency($name)) return false;
 		if ($this->save->get($name) === null) return false;
 		return true;
 	}
@@ -32,19 +32,20 @@ final class Player extends PPlayer {
 
 		return round($this->save->get($currencyName), 2);
 	}
+
 	public function set(string $currencyName, float $count, bool $message = true, bool $event = true): void {
 		$currencyName = strtolower($currencyName);
-		if (!API::existsCurrency($currencyName)) return;
+		if (!API::getCurrencyManager()->existsCurrency($currencyName)) return;
 
 		if ($event) {
-			$event = new SetEvent($this, $count, API::getCurrencyByName($currencyName));
+			$event = new SetEvent($this, $count, API::getCurrencyManager()->getCurrencyByName($currencyName));
 			$event->call();
 			if ($event->isCancelled()) return;
 		}
 
 		$this->save->set($currencyName, $count);
 
-		$sing = API::getCurrencyByName($currencyName)->getSing();
+		$sing = API::getCurrencyManager()->getCurrencyByName($currencyName)->getSing();
 		if ($message) $this->sendActionBarMessage(
 			str_replace(
 				"{count}",
@@ -58,10 +59,11 @@ final class Player extends PPlayer {
 		);
 	}
 
+
 	public function add(string $currencyName, float $count, bool $message = true, bool $event = true): bool {
 		$currencyName = strtolower($currencyName);
-		if (!API::existsCurrency($currencyName)) return false;
-		$currency = API::getCurrencyByName($currencyName);
+		if (!API::getCurrencyManager()->existsCurrency($currencyName)) return false;
+		$currency = API::getCurrencyManager()->getCurrencyByName($currencyName);
 
 		if ($event) {
 			$event = new AddEvent($this, $count, $currency);
@@ -89,9 +91,10 @@ final class Player extends PPlayer {
 		);
 		return true;
 	}
+
 	public function remove(string $currencyName, float $count, bool $message = true, bool $event = true): bool {
 		$currencyName = strtolower($currencyName);
-		if (!API::existsCurrency($currencyName)) return false;
+		if (!API::getCurrencyManager()->existsCurrency($currencyName)) return false;
 
 		if (!$this->haveCurrency($currencyName)) {
 			if ($message) $this->sendActionBarMessage(
@@ -102,7 +105,7 @@ final class Player extends PPlayer {
 
 		$boolean = $this->get($currencyName) < $count;
 		if ($boolean) {
-			$sing = API::getCurrencyByName($currencyName)->getSing();
+			$sing = API::getCurrencyManager()->getCurrencyByName($currencyName)->getSing();
 			if (!$message) $this->sendMessage(
 				str_replace(
 					"{missing}",
@@ -118,14 +121,14 @@ final class Player extends PPlayer {
 		}
 
 		if ($event) {
-			$event = new RemoveEvent($this, $count, API::getCurrencyByName($currencyName));
+			$event = new RemoveEvent($this, $count, API::getCurrencyManager()->getCurrencyByName($currencyName));
 			$event->call();
 			if ($event->isCancelled()) return false;
 		}
 
 		$this->set($currencyName, $this->get($currencyName)-$count, false, false);
 
-		$sing = API::getCurrencyByName($currencyName)->getSing();
+		$sing = API::getCurrencyManager()->getCurrencyByName($currencyName)->getSing();
 
 		if (!$message) $this->sendMessage(
 			str_replace(
@@ -144,6 +147,8 @@ final class Player extends PPlayer {
 		);
 		return true;
 	}
+
+
 	public function purchase(string $currencyName, float $count, ?callable $callable0, ?callable $callable1) {
 		$currencyName = strtolower($currencyName);
 		if (!API::existsCurrency($currencyName)) return false;
@@ -157,9 +162,10 @@ final class Player extends PPlayer {
 			if (!is_null($callable1)) $callable1($currency);
 		}
 	}
+
 	public function transaction(string $currencyName, float $count, Player $player, bool $event = true): bool {
 		if ($event) {
-			$event = new TransactionEvent($this, $count, API::getCurrencyByName($currencyName));
+			$event = new TransactionEvent($this, $count, API::getCurrencyManager()->getCurrencyByName($currencyName));
 			$event->call();
 			if ($event->isCancelled()) return false;
 		}
@@ -180,6 +186,8 @@ final class Player extends PPlayer {
 			throw $error;
 		}
 	}
+
+
 	public function disconnect(Translatable|string $reason, Translatable|string|null $quitMessage = null, Translatable|string|null $disconnectScreenMessage = null) : void{
 		$this->removeCurrentWindow();
 		$this->saveConfig();

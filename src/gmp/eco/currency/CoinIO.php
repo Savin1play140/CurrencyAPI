@@ -54,7 +54,7 @@ class CoinIO implements Currency {
 		$str = str_replace('0', '', "$float", $half);
 		return round((float)$str, 2);
 	}
-	protected function setPrice(float $price): void {
+	public function setPrice(float $price): void {
 		$this->price = $price;
 	}
 	public function getName(): string {
@@ -65,4 +65,8 @@ class CoinIO implements Currency {
 	}
 	public function isBuyable(): bool { return true; }
 	public function isSalable(): bool { return true; }
+
+	public function maxCount(): float { return PHP_INT_MAX; }
+	public function buyLimit(): float { return 1000000000; }
+	public function sellLimit(): float { return 1000000000; }
 }

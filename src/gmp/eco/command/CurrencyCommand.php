@@ -45,9 +45,9 @@ class CurrencyCommand extends BaseCommand implements PluginOwned {
 		if (!$sender instanceof Player) return;
 		$name = $this->currency->getName();
 		$currency = $this->currency;
-		$sing = API::getCurrencyByName($this->currency->getExchangeable())->getSing();
+		$sing = API::getCurrencyManager()->getCurrencyByName($this->currency->getExchangeable())->getSing();
 		Form::sendSelf(
-			"§l".$name." [".$this->API->getPluginNameByCurrency($currency)."]",
+			"§l".$name." [".API::getCurrencyManager()->getPluginNameByCurrency($currency)."]",
 			"§l".$name." price: ".number_format($currency->getPrice(), 2, ".", ",").$sing."\nYou have: ".number_format($sender->get($name), 2, ".", ",").$currency->getSing(),
 			$sender,
 			$this->currency

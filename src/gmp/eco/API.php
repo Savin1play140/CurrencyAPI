@@ -8,24 +8,29 @@ use pocketmine\utils\Config;
 use pocketmine\Server;
 
 use gmp\eco\command\CurrencyCommand;
-use gmp\eco\currency\{Dollar, CoinIO, Currency};
+use gmp\eco\currency\{Dollar, CoinIO, Currency, CurrencyManager};
+use gmp\eco\player\PlayerManager;
 use gmp\eco\player\Player;
 
 use gmp\eco\command\api\PacketHooker;
 
 final class API {
-	private static array $currencies = [];
-	private static array $pluginsOfCurrencies = [];
 	private static \AttachableLogger $logger;
 	private static ?API $instance = null;
 	private static Config $api_config;
 	private static Config $lang;
+	private static CurrencyManager $cm;
+	private static PlayerManager $pm;
 
 	public function __construct(
 		private PluginEP $main
-	) {}
+	) {
+		self::$cm = new CurrencyManager($this);
+		self::$pm = new PlayerManager($this);
+	}
 
-
+	public static function getCurrencyManager(): CurrencyManager { return self::$cm; }
+	public static function getPlayerManager(): PlayerManager { return self::$pm; }
 	public function getMain(): PluginEP { return $this->main; }
 
 
@@ -76,8 +81,8 @@ final class API {
 		self::$instance = $this;
 		self::$logger = $logger;
 
-		self::registerCurrency($this->main->getName(), new Dollar());
-		self::registerCurrency($this->main->getName(), new CoinIO());
+		self::$cm->registerCurrency($this->main->getName(), new Dollar());
+		self::$cm->registerCurrency($this->main->getName(), new CoinIO());
 
 		if(!PacketHooker::isRegistered()) {
 			PacketHooker::register($this->main);
@@ -105,45 +110,6 @@ final class API {
 	public function PlayerQ(Player $player): void {
 		$player->removeCurrentWindow();
 		$player->saveConfig();
-	}
-
-
-	public static function registerCurrency(string $pluginName, Currency $currency): void {
-		self::$currencies[strtolower($currency->getName())] = $currency;
-		self::$pluginsOfCurrencies[$currency->getName()] = $pluginName;
-		Server::getInstance()->getCommandMap()->register($pluginName, new CurrencyCommand($currency, self::$instance));
-	}
-
-	public static function getCurrencies(): array {
-		return self::$currencies;
-	}
-
-	public static function getCurrencyByName(string $name): ?Currency {
-		if (isset(self::$currencies[strtolower($name)])) return self::$currencies[strtolower($name)];
-		return null;
-	}
-
-	public static function existsCurrency(string $name): bool {
-		$null = false;
-		if (is_null(self::$currencies[strtolower($name)])) $null = true;
-
-		$is_currency = false;
-		if (self::$currencies[strtolower($name)] instanceof Currency) $is_currency = true;
-		
-		if ($null == false && $is_currency == true) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-
-
-	public static function getPluginNameByCurrencyName(string $currency) : string {
-		return self::$pluginsOfCurrencies[$currency];
-	}
-
-	public static function getPluginNameByCurrency(Currency $currency) : string {
-		return self::getPluginNameByCurrencyName($currency->getName());
 	}
 
 

@@ -6,7 +6,7 @@ use pocketmine\plugin\PluginBase;
 use pocketmine\event\Listener;
 use pocketmine\utils\Config;
 
-use gmp\eco\player\Player;
+use gmp\eco\player\{Player, OfflinePlayer};
 
 
 final class PluginEP extends PluginBase implements Listener {
@@ -28,16 +28,24 @@ final class PluginEP extends PluginBase implements Listener {
 	public function onJoin(PlayerJoinEvent $event): void {
 		$player = $event->getPlayer();
 		if (!($player instanceof Player)) return;
+
 		$config = new Config($this->getDataFolder()."players/".$player->getName().".json", Config::JSON);
 		$config->setDefaults(["dollar" => 100]);
 		$player->init($this->api, $config);
-		$this->getLogger()->debug("Player use class: ".get_class($player));
+
+		$this->api->getPlayerManager()->playerJoin($player);
 	}
 
 	public function playerQuit(PlayerQuitEvent $event): void {
 		$player = $event->getPlayer();
 		if (!($player instanceof Player)) return;
 		$this->api->PlayerQ($player);
+
+		$config = new Config($this->getDataFolder()."players/".$player->getName().".json", Config::JSON);
+		$config->setDefaults(["dollar" => 100]);
+		$offlinePlayer = new OfflinePlayer($player->getName(), $player->getSaveData(), $this->api, $config);
+
+		$this->api->getPlayerManager()->playerQuit($offlinePlayer);
 	}
 
 	public function onDisable(): void {
@@ -45,7 +53,7 @@ final class PluginEP extends PluginBase implements Listener {
 			if (!($player instanceof Player)) continue;
 			$this->api->PlayerQ($player);
 		}
-		foreach (API::getCurrencies() as $name => $currency) {
-		}
+
+		$this->api->getCurrencyManager()->saveCurrenciesData();
 	}
 }
