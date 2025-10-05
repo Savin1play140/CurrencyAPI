@@ -47,7 +47,7 @@ final class API {
 				"database" => [
 					"type" => "sqlite",
 					"sqlite" => [
-						"file" => "data.db"
+						"file" => "sqlite.db"
 					],
 					"mysql" => [
 						"host" => "127.0.0.1",

@@ -3,9 +3,9 @@ coin_coff_buy: 0.0026
 coin_coff_sell: 0.0025
 
 database:
-  type: mysql
+  type: sqlite
   sqlite:
-    file: data.db
+    file: sqlite.db
 
   mysql:
     host: 127.0.0.1

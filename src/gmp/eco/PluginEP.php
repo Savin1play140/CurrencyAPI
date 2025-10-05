@@ -25,7 +25,7 @@ final class PluginEP extends PluginBase implements Listener {
 		$this->conf = $this->api->getAPIConfig()->get("database", [
 			"type" => "sqlite", // or "mysql"
 			"sqlite" => [
-				"file" => "data.db"
+				"file" => "sqlite.db"
 			],
 			"mysql" => [
 				"host" => "127.0.0.1",
