@@ -25,8 +25,7 @@ final class API {
 	public function __construct(
 		private PluginEP $main
 	) {
-		self::$cm = new CurrencyManager($this);
-		self::$pm = new PlayerManager($this);
+		$this->init($this->main->getLogger());
 	}
 
 	public static function getCurrencyManager(): CurrencyManager { return self::$cm; }
@@ -45,11 +44,35 @@ final class API {
 			[
 				"lang" => "EN_US",
 				"coin_coff_buy" => "0.0026",
-				"coin_coff_sell" => "0.0025"
+				"coin_coff_sell" => "0.0025",
+				"database" => [
+					"type" => "sqlite",
+					"sqlite" => [
+						"file" => "data.sqlite"
+					],
+					"mysql" => [
+						"host" => "127.0.0.1",
+						"username" => "root",
+						"password" => ""
+					]
+				]
 			]
 		);
 
+		self::$cm = new CurrencyManager($this);
+		self::$pm = new PlayerManager($this);
+
 		$logger->info("Config file: ".($this->main->getDataFolder()."settings.yml"));
+
+		$database = self::$api_config->get("database");
+
+		$logger->info("Database type: ".$database["type"]);
+		if ($database["type"] == "sqlite") {
+			$logger->info("Database file: ".$this->main->getDataFolder().$database["sqlite"]["file"]);
+		} elseif ($database["type"] == "mysql") {
+			$logger->info("Database host: ".$database["mysql"]["host"]);
+			$logger->info("Database user: ".$database["mysql"]["username"]);
+		}
 
 		self::$lang = new Config(
 			$this->main->getDataFolder()."lang/".self::$api_config->get("lang", "EN_US").".json",
@@ -96,13 +119,23 @@ final class API {
 
 
 	public static function getLang(): Config {
-		if (self::$lang == null) self::$lang = new Config(self::$instance->main->getDataFolder()."lang/".self::$api_config->get("lang", "EN_US").".json");
+		if (self::$lang == null && $main != null)
+			self::$lang = new Config(
+				self::$instance->main->getDataFolder()."lang/".self::$api_config->get("lang", "EN_US").".json",
+				Config::JSON
+			);
+
 		return self::$lang;
 	}
 
 
 	public static function getAPIConfig(): Config {
-		if (self::$api_config == null) self::$api_config = new Config(self::$instance->main->getDataFolder()."settings.yml", Config::YAML);
+		if (self::$api_config == null && $main != null)
+			self::$api_config = new Config(
+				self::$instance->main->getDataFolder()."settings.yml",
+				Config::YAML
+			);
+
 		return self::$api_config;
 	}
 

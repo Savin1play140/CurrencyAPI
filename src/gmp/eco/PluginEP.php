@@ -1,20 +1,38 @@
 <?php
 namespace gmp\eco;
 
-use pocketmine\event\player\{PlayerJoinEvent, PlayerMoveEvent, PlayerQuitEvent, PlayerCreationEvent};
+use pocketmine\event\player\{
+	PlayerJoinEvent, PlayerMoveEvent,
+	PlayerQuitEvent, PlayerCreationEvent,
+	PlayerLoginEvent
+};
 use pocketmine\plugin\PluginBase;
 use pocketmine\event\Listener;
 use pocketmine\utils\Config;
+use gmp\eco\util\database\libasynql;
 
 use gmp\eco\player\{Player, OfflinePlayer};
+use gmp\eco\util\SQL;
 
 
 final class PluginEP extends PluginBase implements Listener {
 	private API $api;
+	private array $conf;
 
 	public function onEnable(): void {
 		$this->api = new API($this);
-		$this->api->init($this->getLogger());
+		
+		$this->conf = $this->api->getAPIConfig()->get("database", [
+			"type" => "sqlite", // or "mysql"
+			"sqlite" => [
+				"file" => "data.sqlite"
+			],
+			"mysql" => [
+				"host" => "127.0.0.1",
+				"username" => "root",
+				"password" => ""
+			]
+		]);
 
 		$this->getServer()->getPluginManager()->registerEvents($this, $this);
 	}
@@ -29,11 +47,18 @@ final class PluginEP extends PluginBase implements Listener {
 		$player = $event->getPlayer();
 		if (!($player instanceof Player)) return;
 
-		$config = new Config($this->getDataFolder()."players/".$player->getName().".json", Config::JSON);
-		$config->setDefaults(["dollar" => 100]);
-		$player->init($this->api, $config);
+		try {
+			$sql = new SQL($this->conf, $player->getName(), $this->getDataFolder());
+			$sql->setDefaults(["dollar" => 100]);
 
-		$this->api->getPlayerManager()->playerJoin($player);
+			$player->init($this->api, $sql);
+
+			$this->api->getPlayerManager()->playerJoin($player);
+		} catch (Exception|Error $e) {
+			$player->kick("Internal error");
+			$this->getLogger()->error($e);
+		}
+
 	}
 
 	public function playerQuit(PlayerQuitEvent $event): void {
@@ -41,9 +66,10 @@ final class PluginEP extends PluginBase implements Listener {
 		if (!($player instanceof Player)) return;
 		$this->api->PlayerQ($player);
 
-		$config = new Config($this->getDataFolder()."players/".$player->getName().".json", Config::JSON);
-		$config->setDefaults(["dollar" => 100]);
-		$offlinePlayer = new OfflinePlayer($player->getName(), $player->getSaveData(), $this->api, $config);
+		$sql = new SQL($this->conf, $player->getName(), $this->getDataFolder());
+		$sql->setDefaults(["dollar" => 100]);
+
+		$offlinePlayer = new OfflinePlayer($player->getName(), $player->getSaveData(), $this->api, $sql);
 
 		$this->api->getPlayerManager()->playerQuit($offlinePlayer);
 	}

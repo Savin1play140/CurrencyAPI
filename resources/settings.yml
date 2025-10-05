@@ -1,5 +1,13 @@
----
 lang: EN_US
 coin_coff_buy: 0.0026
 coin_coff_sell: 0.0025
-...
+
+database:
+  type: mysql
+  sqlite:
+    file: data.sqlite
+
+  mysql:
+    host: 127.0.0.1
+    username: root
+    password: ""

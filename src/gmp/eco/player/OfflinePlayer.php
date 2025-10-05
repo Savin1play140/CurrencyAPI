@@ -3,26 +3,26 @@ namespace gmp\eco\player;
 
 use pocketmine\player\OfflinePlayer as OPlayer;
 use pocketmine\nbt\tag\CompoundTag;
-use pocketmine\utils\Config;
+use gmp\eco\util\SQL;
 use gmp\eco\API;
 
-class offlinePlayer extends OPlayer {
-	private ?API $API = null;
-	private Config $save;
+class OfflinePlayer extends OPlayer {
+	private ?API $api = null;
+	private SQL $save;
 
 	public function __construct(
 		private string $name,
 		private ?CompoundTag $namedtag,
 		API $api,
-		Config $conf
+		SQL $sql
 	){
-		parent::__construct($name, $namedtag);
-		$this->init($api, $conf);
+		parent::__construct(str_replace(" ", "_", $name), $namedtag);
+		$this->init($api, $sql);
 	}
 
-	public function init(API $API, Config $conf): void {
-		$this->API = $API;
-		$this->save = $conf;
+	public function init(API $api, SQL $sql): void {
+		$this->api = $api;
+		$this->save = $sql;
 	}
 
 

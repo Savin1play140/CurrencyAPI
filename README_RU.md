@@ -5,8 +5,8 @@
   - Далее:
     - [x] Лимит на количество валюты
     - [x] Лимит на транзакцию
-    - [ ] Сохранение баланса игрока в базе данных SQL
-	- [x] Сохранение стоимости валют
+    - [x] Сохранение баланса игрока в базе данных SQL
+    - [x] Сохранение стоимости валютв базе данных SQL
 
 # Для создания валюты
 Main:
@@ -14,11 +14,11 @@ Main:
 use gmp\eco\API;
 
 	/* ... */
-		API::registerCurrency($main->getName(), new YourCurrency());
+		API::getCurrencyManager()->registerCurrency($main->getName(), new YourCurrency());
 	/* ... */
 ```
 Вместо YourCurrency класс вашей валюты
-YourCurrency:
+Your Currency:
 ```php
 <?php
 namespace your\plugin\space;
@@ -43,38 +43,49 @@ class YourCurrency implements Currency {
 	}
 	public function isBuyable(): bool { return true; }
 	public function isSalable(): bool { return true; }
+
+	public function maxCount(): float { return PHP_float_MAX; }
+
+	public function buyLimit(): float { return PHP_float_NAX; }
+	public function sellLimit(): float { return PHP_float_MAX; }
 }
 ```
 # Для использования экономической стороны
 ```php
 // Для добавления к балансу валюты игрока
-$target->add($currency->getName(), $count);
+$target->add($currencyName, $count);
 // Для удаления из баланса валюты игрока
-$target->remove($currency->getName(), $count);
+$target->remove($currencyName, $count);
 // Для установки баланса валюты игрока
-$target->set($currency->getName(), $count);
+$target->set($currencyName, $count);
 // Для совершения транзакции
-$target->transaction($currency->getName(), $count $player);
+$target->transaction($currencyName, $count $player);
 // Для получения баланса валюты игрока
-$count = $target->get($currency->getName());
+$count = $target->get($currencyName);
 ```
 
 # Команды
 По умолчанию:
 /dollar
- - set <count: int> [player: string] только операторы
- - add <count: int> [player: string] только операторы
- - remove <count: int> [player: string] только операторы
- - transaction <count: int> <player: int> все игроки
+ - sell <count: float> все игроки
+ - buy <count: float> все игроки
+ - set <count: float> [player: string] только операторы
+ - add <count: float> [player: string] только операторы
+ - remove <count: float> [player: string] только операторы
+ - transaction <count: float> <player: string> все игроки
 /coinio
- - set <count: int> <?player: string> только операторы
- - add <count: int> <?player: string> только операторы
- - remove <count: int> [player: string] только операторы
- - transaction <count: int> <player: int> все игроки
+ - sell <count: float> все игроки
+ - buy <count: float> все игроки
+ - set <count: float> <?player: string> только операторы
+ - add <count: float> <?player: string> только операторы
+ - remove <count: float> [player: string] только операторы
+ - transaction <count: float> <player: string> все игроки
 Добавляемые другими плагинам:
 /CurrencyName
- - set <count: int> <?player: string> только операторы
- - add <count: int> <?player: string> только операторы
- - remove <count: int> [player: string] только операторы
- - transaction <count: int> <player: int> все игроки
+ - sell <count: float> все игроки
+ - buy <count: float> все игроки
+ - set <count: float> <?player: string> только операторы
+ - add <count: float> <?player: string> только операторы
+ - remove <count: float> [player: string] только операторы
+ - transaction <count: float> <player: string> все игроки
 

@@ -1,19 +1,30 @@
 <?php
 namespace gmp\eco\player;
 
+use pocketmine\network\mcpe\NetworkSession;
 use pocketmine\player\Player as PPlayer;
-use pocketmine\utils\Config;
+use pocketmine\nbt\tag\CompoundTag;
+use pocketmine\player\PlayerInfo;
 use pocketmine\lang\Translatable;
+use pocketmine\entity\Location;
+use pocketmine\utils\Config;
+use pocketmine\Server;
 
 use gmp\eco\event\{AddEvent, RemoveEvent, SetEvent, TransactionEvent};
+use gmp\eco\util\SQL;
 use gmp\eco\API;
 
 final class Player extends PPlayer {
 	private ?API $API = null;
-	private Config $save;
+	private SQL $save;
 
-	public function init(API $API, Config $conf): void {
-		$this->username = str_replace(" ", "_", $this->getName());
+	public function __construct(Server $server, NetworkSession $session, PlayerInfo $oldPI, bool $authenticated, Location $spawnLocation, ?CompoundTag $namedtag) {
+		$username = str_replace(" ", "_", $oldPI->getUsername());
+		$newPI = new PlayerInfo($username, $oldPI->getUuid(), $oldPI->getSkin(), $oldPI->getLocale(), $oldPI->getExtraData());
+		parent::__construct($server, $session, $newPI, $authenticated, $spawnLocation, $namedtag);
+	}
+
+	public function init(API $API, SQL $conf): void {
 		$this->API = $API;
 		$this->save = $conf;
 	}
@@ -182,16 +193,21 @@ final class Player extends PPlayer {
 		try {
 			$this->save->save();
 			$this->sendActionBarMessage(API::getLang()->getNested("player.saved"));
-		} catch (Error $error) {
-			throw $error;
+		} catch (Exception|Error $e) {
+			throw $e;
 		}
 	}
 
 
 	public function disconnect(Translatable|string $reason, Translatable|string|null $quitMessage = null, Translatable|string|null $disconnectScreenMessage = null) : void{
 		$this->removeCurrentWindow();
-		$this->saveConfig();
-		$this->save->save();
+		try {
+			$this->saveConfig();
+			$this->save->save();
+			$this->save->close();
+		} catch (Exception|Error $e) {
+			$this->getServer()->getLogger()->error($e);
+		}
 		parent::disconnect($reason, $quitMessage, $disconnectScreenMessage);
 	}
 }

@@ -6,8 +6,8 @@ Two-way economic A.P.I. to create currencies on the one hand, and on the other t
   - Next steps:
     - [x] Currency count limit
     - [x] Currency buy/sell limit
-    - [ ] Saving player balance to SQL database
-	- [x] Saving currency price
+    - [x] Saving player balance to SQL database
+    - [x] Saving currency price to SQL database
 
 # For create currency
 Main:
@@ -15,11 +15,11 @@ Main:
 use gmp\eco\API;
 
 	/* ... */
-		API::registerCurrency($main->getName(), new YourCurrency());
+		API::getCurrencyManager()->registerCurrency($main->getName(), new YourCurrency());
 	/* ... */
 ```
 Instead of YourCurrency the class of your currency
-YourCurrency:
+Your Currency:
 ```php
 <?php
 namespace your\plugin\space;
@@ -44,38 +44,49 @@ class YourCurrency implements Currency {
 	}
 	public function isBuyable(): bool { return true; }
 	public function isSalable(): bool { return true; }
+
+	public function maxCount(): float { return PHP_float_MAX; }
+
+	public function buyLimit(): float { return PHP_float_NAX; }
+	public function sellLimit(): float { return PHP_float_MAX; }
 }
 ```
 # For use economic side:
 ```php
 // To add a player's currency to the balance
-$target->add($currency->getName(), $count);
+$target->add($currencyName, $count);
 // To remove a player's currency from the balance
-$target->remove($currency->getName(), $count);
+$target->remove($currencyName, $count);
 // To set the player's currency balance
-$target->set($currency->getName(), $count);
+$target->set($currencyName, $count);
 // To complete a transaction
-$target->transaction($currency->getName(), $count, $player);
+$target->transaction($currencyName, $count, $player);
 // To get the player's currency balance
-$count = $target->get($currency->getName());
+$count = $target->get($currencyName);
 ```
 
 # Commands
 Default: <br>
 /dollar
- - set <count: int> [player: string] operators only
- - add <count: int> [player: string] operators only
- - remove <count: int> [player: string] operators only
- - transaction <count: int> <player: int> all players <br>
+ - sell <count: float> all players
+ - buy <count: float> all players
+ - set <count: float> [player: string] operators only
+ - add <count: float> [player: string] operators only
+ - remove <count: float> [player: string] operators only
+ - transaction <count: float> <player: string> all players <br>
 /coinio
- - set <count: int> <?player: string> operators only
- - add <count: int> <?player: string> operators only
- - remove <count: int> [player: string] operators only
- - transaction <count: int> <player: int> all players
+ - sell <count: float> all players
+ - buy <count: float> all players
+ - set <count: float> <?player: string> operators only
+ - add <count: float> <?player: string> operators only
+ - remove <count: float> [player: string] operators only
+ - transaction <count: float> <player: string> all players
 Added to other plugins:
 /CurrencyName
- - set <count: int> <?player: string> operators only
- - add <count: int> <?player: string> operators only
- - remove <count: int> [player: string] operators only
- - transaction <count: int> <player: int> all players
+ - sell <count: float> all players
+ - buy <count: float> all players
+ - set <count: float> <?player: string> operators only
+ - add <count: float> <?player: string> operators only
+ - remove <count: float> [player: string] operators only
+ - transaction <count: float> <player: string> all players
 

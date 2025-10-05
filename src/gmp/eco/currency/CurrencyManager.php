@@ -3,27 +3,42 @@ namespace gmp\eco\currency;
 
 use gmp\eco\command\CurrencyCommand;
 use pocketmine\Server;
-use pocketmine\utils\Config;
+use gmp\eco\util\SQL;
 use gmp\eco\API;
 
 class CurrencyManager {
 	private array $currencies = [];
 	private array $pluginsOfCurrencies = [];
 
-	private Config $save;
+	private SQL $save;
 
 	public function __construct(
 		private API $api
 	) {
-		$save_dir = $this->api->getMain()->getDataFolder();
-		$this->save = new Config($save_dir."currencies.json", Config::JSON);
+		$conf = $this->api->getAPIConfig()->get("database", [
+			"type" => "sqlite", // or "mysql"
+			"sqlite" => [
+				"file" => "data.sqlite"
+			],
+			"mysql" => [
+				"host" => "127.0.0.1",
+				"username" => "root",
+				"password" => ""
+			]
+		]);
+		$this->save = new SQL($conf, "currencies", $this->api->getMain()->getDataFolder());
 	}
 
 
 	public function registerCurrency(string $pluginName, Currency $currency): void {
-		$this->currencies[strtolower($currency->getName())] = $currency;
-		$this->pluginsOfCurrencies[$currency->getName()] = $pluginName;
+		$name = strtolower($currency->getName());
+		if ($this->existsCurrency($name)) throw new \Exception("Currency already exists!");
+
+		$this->currencies[$name] = $currency;
+		$this->pluginsOfCurrencies[$name] = $pluginName;
+
 		Server::getInstance()->getCommandMap()->register($pluginName, new CurrencyCommand($currency, $this->api));
+
 		$this->loadCurrencyData($currency);
 	}
 
@@ -37,34 +52,28 @@ class CurrencyManager {
 	}
 
 	public function existsCurrency(string $name): bool {
-		$exists = false;
-		if (!is_null($this->currencies[strtolower($name)])) $exists = true;
-
-		$is_currency = false;
-		if ($this->currencies[strtolower($name)] instanceof Currency) $is_currency = true;
-		
-		return $exists && $is_currency;
+		return $this->getCurrencyByName(strtolower($name)) != null ? true : false;
 	}
 
 
-	public function getPluginNameByCurrencyName(string $currency) : string {
-		return $this->pluginsOfCurrencies[$currency];
+	public function getPluginNameByCurrencyName(string $name) : string {
+		return $this->pluginsOfCurrencies[strtolower($name)];
 	}
 
 	public function getPluginNameByCurrency(Currency $currency) : string {
-		return $this->getPluginNameByCurrencyName($currency->getName());
+		return $this->getPluginNameByCurrencyName(strtolower($currency->getName()));
 	}
 
 
-	public function saveCurrencyData(string $currencyName): void {
-		$currencyName = strtolower($currencyName);
-		$currency = $this->getCurrencyByName($currencyName);
+	public function saveCurrencyData(string $name): void {
+		$name = strtolower($name);
+		$currency = $this->getCurrencyByName($name);
 
 		$data = [
 			"price" => round($currency->getPrice(), 2)
 		];
 
-		$this->save->set($currencyName, $data);
+		$this->save->set($name, $data);
 		$this->save->save();
 	}
 
