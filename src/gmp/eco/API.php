@@ -36,7 +36,6 @@ final class API {
 	public function init(\AttachableLogger $logger): void {
 		@mkdir($this->main->getDataFolder());
 		@mkdir($this->main->getDataFolder()."lang/");
-		@mkdir($this->main->getDataFolder()."players/");
 
 		self::$api_config = new Config(
 			$this->main->getDataFolder()."settings.yml",
@@ -48,7 +47,7 @@ final class API {
 				"database" => [
 					"type" => "sqlite",
 					"sqlite" => [
-						"file" => "data.sqlite"
+						"file" => "data.db"
 					],
 					"mysql" => [
 						"host" => "127.0.0.1",
