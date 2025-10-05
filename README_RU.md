@@ -66,26 +66,10 @@ $count = $target->get($currencyName);
 
 # Команды
 По умолчанию:
-/dollar
+/[currency]
  - sell <count: float> все игроки
  - buy <count: float> все игроки
  - set <count: float> [player: string] только операторы
  - add <count: float> [player: string] только операторы
  - remove <count: float> [player: string] только операторы
  - transaction <count: float> <player: string> все игроки
-/coinio
- - sell <count: float> все игроки
- - buy <count: float> все игроки
- - set <count: float> <?player: string> только операторы
- - add <count: float> <?player: string> только операторы
- - remove <count: float> [player: string] только операторы
- - transaction <count: float> <player: string> все игроки
-Добавляемые другими плагинам:
-/CurrencyName
- - sell <count: float> все игроки
- - buy <count: float> все игроки
- - set <count: float> <?player: string> только операторы
- - add <count: float> <?player: string> только операторы
- - remove <count: float> [player: string] только операторы
- - transaction <count: float> <player: string> все игроки
-

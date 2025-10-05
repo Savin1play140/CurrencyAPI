@@ -74,7 +74,7 @@ class CustomForm extends Form {
 
     /**
      * @param string $text
-     * @param bool|null $default
+     * @param bool $default
      * @param string|null $label
      * @return $this
      */
@@ -133,7 +133,7 @@ class CustomForm extends Form {
     /**
      * @param string $text
      * @param array $options
-     * @param int|null $default
+     * @param int $default
      * @param string|null $label
      * @return $this
      */
@@ -147,7 +147,7 @@ class CustomForm extends Form {
     /**
      * @param string $text
      * @param string $placeholder
-     * @param string|null $default
+     * @param string $default
      * @param string|null $label
      * @return $this
      */

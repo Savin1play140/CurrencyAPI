@@ -67,26 +67,10 @@ $count = $target->get($currencyName);
 
 # Commands
 Default: <br>
-/dollar
+/[currency]
  - sell <count: float> all players
  - buy <count: float> all players
  - set <count: float> [player: string] operators only
  - add <count: float> [player: string] operators only
  - remove <count: float> [player: string] operators only
  - transaction <count: float> <player: string> all players <br>
-/coinio
- - sell <count: float> all players
- - buy <count: float> all players
- - set <count: float> <?player: string> operators only
- - add <count: float> <?player: string> operators only
- - remove <count: float> [player: string] operators only
- - transaction <count: float> <player: string> all players
-Added to other plugins:
-/CurrencyName
- - sell <count: float> all players
- - buy <count: float> all players
- - set <count: float> <?player: string> operators only
- - add <count: float> <?player: string> operators only
- - remove <count: float> [player: string] operators only
- - transaction <count: float> <player: string> all players
-
