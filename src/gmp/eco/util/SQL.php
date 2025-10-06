@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace gmp\eco\util;
 
 class SQL {
@@ -25,6 +27,10 @@ class SQL {
 			throw new \Exception("Unsupported database type: " . $this->type);
 		}
 
+		if ($this->pdo === null) {
+			throw new \RuntimeException('Failed to initialize PDO connection');
+		}
+
 		$this->pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 	}
 
@@ -45,7 +51,12 @@ class SQL {
 		$stmt->execute(['key' => $key]);
 		$result = $stmt->fetchColumn();
 
-		return $result !== false ? unserialize($result) : $default;
+		if ($result === false) {
+			return $default;
+		}
+
+		$unserialized = unserialize($result);
+		return $unserialized !== false ? $unserialized : $default;
 	}
 
 	public function set(string $key, $value): void {
@@ -57,9 +68,11 @@ class SQL {
 	public function setDefaults(array $defaults): void {
 		$this->initialize();
 		foreach ($defaults as $key => $value) {
-			$existing = $this->get($key);
-			if ($existing === null) {
-				$this->set($key, $value);
+			if (!array_key_exists($key, $this->buffer)) {
+				$existing = $this->get($key);
+				if ($existing === null) {
+					$this->buffer[$key] = $value;
+				}
 			}
 		}
 		$this->save();
