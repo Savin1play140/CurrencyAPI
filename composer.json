@@ -10,7 +10,7 @@
     "license": "GPL-3.0",
     "autoload": {
         "psr-4": {
-            "Savin1play140\\Currencyapi\\": "src/"
+            "gmp\\eco\\": "src/"
         },
         "classmap": [
             "vendor/jojoe77777/formapi/src"
