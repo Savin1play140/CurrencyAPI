@@ -1,0 +1,11 @@
+parameters:
+  level: 5
+  paths:
+    - %currentWorkingDirectory%/src
+  dynamicConstantNames:
+    - pocketmine\IS_DEVELOPMENT_BUILD
+    - pocketmine\DEBUG
+  bootstrapFiles:
+    - %currentWorkingDirectory%/vendor/autoload.php
+#  scanDirectories:
+#    -  %currentWorkingDirectory%/MongoProvider

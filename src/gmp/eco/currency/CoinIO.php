@@ -49,7 +49,7 @@ class CoinIO implements Currency {
 		$this->setPrice($newPrice);
 	}
 	public function removeZero(float $float): float {
-		$zeroCount = substr_count($float, '0');
+		$zeroCount = substr_count((string) $float, '0');
 		$half = 1000;
 		$str = str_replace('0', '', "$float", $half);
 		return round((float)$str, 2);

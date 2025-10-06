@@ -1,18 +1,11 @@
 <?php
 namespace gmp\eco;
 
-use pocketmine\plugin\PluginBase;
-use pocketmine\event\Listener;
-use pocketmine\plugin\Plugin;
 use pocketmine\utils\Config;
-use pocketmine\Server;
-
-use gmp\eco\command\CurrencyCommand;
-use gmp\eco\currency\{Dollar, CoinIO, Currency, CurrencyManager};
+use gmp\eco\currency\{Dollar, CoinIO, CurrencyManager};
 use gmp\eco\player\PlayerManager;
 use gmp\eco\player\Player;
-
-use gmp\eco\command\api\PacketHooker;
+use CortexPE\Commando\PacketHooker;
 
 final class API {
 	private static \AttachableLogger $logger;
@@ -118,7 +111,7 @@ final class API {
 
 
 	public static function getLang(): Config {
-		if (self::$lang == null && $main != null)
+		if (self::$lang == null && self::$instance != null)
 			self::$lang = new Config(
 				self::$instance->main->getDataFolder()."lang/".self::$api_config->get("lang", "EN_US").".json",
 				Config::JSON
@@ -129,7 +122,7 @@ final class API {
 
 
 	public static function getAPIConfig(): Config {
-		if (self::$api_config == null && $main != null)
+		if (self::$api_config == null && self::$instance != null)
 			self::$api_config = new Config(
 				self::$instance->main->getDataFolder()."settings.yml",
 				Config::YAML

@@ -1,0 +1,48 @@
+{
+    "name": "savin1play140/currencyapi",
+    "type": "project",
+    "require": {
+        "pocketmine/pocketmine-mp": "^5.0.0",
+        "muqsit/simple-packet-handler": "v0.1.5",
+        "paroxity/commando": "3.2.0",
+        "jojoe77777/formapi": "dev-master"
+    },
+    "license": "GPL-3.0",
+    "autoload": {
+        "psr-4": {
+            "Savin1play140\\Currencyapi\\": "src/"
+        },
+        "classmap": [
+            "vendor/jojoe77777/formapi/src"
+        ]
+    },
+    "repositories": [
+        {
+            "type": "package",
+            "package": {
+                "name": "jojoe77777/formapi",
+                "version": "master",
+                "source": {
+                    "type": "git",
+                    "url": "https://github.com/jojoe77777/FormAPI",
+                    "reference": "master"
+                }
+            }
+        },
+        {
+            "type": "package",
+            "package": {
+                "name": "jojoe77777/formapi",
+                "version": "master",
+                "source": {
+                    "type": "git",
+                    "url": "https://github.com/jojoe77777/FormAPI",
+                    "reference": "master"
+                }
+            }
+        }
+    ],
+    "require-dev": {
+        "phpstan/phpstan": "^2.1"
+    }
+}

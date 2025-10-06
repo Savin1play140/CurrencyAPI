@@ -13,6 +13,8 @@ use pocketmine\Server;
 use gmp\eco\event\{AddEvent, RemoveEvent, SetEvent, TransactionEvent};
 use gmp\eco\util\SQL;
 use gmp\eco\API;
+use Exception;
+use Error;
 
 final class Player extends PPlayer {
 	private ?API $API = null;
@@ -87,17 +89,9 @@ final class Player extends PPlayer {
 
 		if ($message) $this->sendActionBarMessage(
 			str_replace(
-				"{count}",
-				number_format($count, 2, ".", ","),
-				str_replace(
-					"{sing}",
-					$sing,
-					str_replace(
-						"{balance}",
-						$this->get($currencyName),
-						API::getLang()->getNested("player.add")
-					)
-				)
+				["{count}", "{sing}", "{balance}"],
+				[number_format($count, 2, ".", ","), $sing, (string) $this->get($currencyName)],
+				API::getLang()->getNested("player.add")
 			)
 		);
 		return true;
@@ -119,13 +113,12 @@ final class Player extends PPlayer {
 			$sing = API::getCurrencyManager()->getCurrencyByName($currencyName)->getSing();
 			if (!$message) $this->sendMessage(
 				str_replace(
-					"{missing}",
-					number_format($count-$this->get($currencyName), 2, ".", ","),
-					str_replace(
-						"{sing}",
-						$sing,
-						API::getLang()->getNested("player.nomoney")
-					)
+					["{missing}", "{sing}"],
+					[
+						number_format($count - $this->get($currencyName), 2, ".", ","),
+						$sing
+					],
+					API::getLang()->getNested("player.nomoney")
 				)
 			);
 			return false;
@@ -176,7 +169,7 @@ final class Player extends PPlayer {
 
 	public function transaction(string $currencyName, float $count, Player $player, bool $event = true): bool {
 		if ($event) {
-			$event = new TransactionEvent($this, $count, API::getCurrencyManager()->getCurrencyByName($currencyName));
+			$event = new TransactionEvent($this, $player, $count, API::getCurrencyManager()->getCurrencyByName($currencyName));
 			$event->call();
 			if ($event->isCancelled()) return false;
 		}
@@ -209,5 +202,9 @@ final class Player extends PPlayer {
 			$this->getServer()->getLogger()->error($e);
 		}
 		parent::disconnect($reason, $quitMessage, $disconnectScreenMessage);
+	}
+
+	public function getAPI() : ?API{
+		return $this->API;
 	}
 }

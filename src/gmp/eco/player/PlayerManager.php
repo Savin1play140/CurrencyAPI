@@ -38,4 +38,8 @@ class PlayerManager {
 		}
 		return $sum;
 	}
+
+	public function getMain() : API{
+		return $this->main;
+	}
 }

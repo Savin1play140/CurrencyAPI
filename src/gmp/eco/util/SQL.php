@@ -16,7 +16,7 @@ class SQL {
 		$this->type = $config['type'];
 
 		if ($this->type === 'sqlite') {
-			$file = $filedir.$config['sqlite']['file'] ?? $filedir.'data.sqlite';
+			$file = $filedir.($config['sqlite']['file'] ?? $filedir.'data.sqlite');
 			$dsn = "sqlite:" . $file;
 			$this->pdo = new \PDO($dsn);
 		} elseif ($this->type === 'mysql') {

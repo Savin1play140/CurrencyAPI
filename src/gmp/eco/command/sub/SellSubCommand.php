@@ -1,25 +1,31 @@
 <?php
 namespace gmp\eco\command\sub;
 
-use gmp\eco\command\api\BaseSubCommand;
-use gmp\eco\command\api\args\{RawStringArgument, FloatArgument};
+use CortexPE\Commando\BaseSubCommand;
+use CortexPE\Commando\args\{RawStringArgument, FloatArgument};
 
 use pocketmine\command\{Command, CommandSender};
 use pocketmine\permission\DefaultPermissions;
 use pocketmine\Server;
 
 use gmp\eco\player\Player;
-use gmp\eco\{API, Form};
+use gmp\eco\{API, Form, PluginEP};
 use gmp\eco\currency\Currency;
 
 class SellSubCommand extends BaseSubCommand {
 	public function __construct(
+		PluginEP $pluginEP,
 		private Currency $currency,
 		private API $API
 	) {
-		parent::__construct("sell", "sell currency");
+		parent::__construct($pluginEP, "sell", "sell currency");
 		$this->setPermission(DefaultPermissions::ROOT_USER);
 	}
+
+	public function getAPI() : API{
+		return $this->API;
+	}
+
 	protected function prepare(): void {
 		$this->registerArgument(0, new FloatArgument("count", false));
 	}
@@ -31,8 +37,15 @@ class SellSubCommand extends BaseSubCommand {
 			return;
 		}
 
-		$count = round($args["count"], 2);
-		if ($count <= 0 or is_null($count)) return;
+		if(!$sender instanceof \gmp\eco\player\Player){
+			//Assertion Fault
+			return;
+		}
+
+		$count = $args["count"] ?? null;
+		if ($count === null) return;
+		$count = round($count, 2);
+		if ($count <= 0) return;
 
 		if (round($sender->get($currency->getName()), 2) < round($count, 2)) {
 			$sender->sendMessage("you're missing ".$currency->getName().", count: ".number_format($count-$sender->get($currency->getName()), 0, ".", ","));
