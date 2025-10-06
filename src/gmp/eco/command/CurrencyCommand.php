@@ -1,14 +1,14 @@
 <?php
 namespace gmp\eco\command;
 
-use gmp\eco\command\api\BaseCommand;
+use CortexPE\Commando\BaseCommand;
 
 use pocketmine\command\{Command, CommandSender};
 use pocketmine\plugin\{PluginOwned, Plugin};
 use pocketmine\permission\DefaultPermissions;
 
 use gmp\eco\player\Player;
-use gmp\eco\{API, Form};
+use gmp\eco\{API, Form, PluginEP};
 use gmp\eco\currency\Currency;
 use gmp\eco\command\sub\{
 	BuySubCommand, SellSubCommand,
@@ -18,9 +18,10 @@ use gmp\eco\command\sub\{
 
 class CurrencyCommand extends BaseCommand implements PluginOwned {
 	public function getOwningPlugin(): Plugin {
-		return $this->API;
+		return $this->pluginEP;
 	}
 	public function __construct(
+		private PluginEP $pluginEP,
 		private Currency $currency,
 		public API $API
 	) {
@@ -33,12 +34,12 @@ class CurrencyCommand extends BaseCommand implements PluginOwned {
 	}
 
 	protected function prepare(): void {
-		$this->registerSubCommand(new BuySubCommand($this->currency, $this->API));
-		$this->registerSubCommand(new SellSubCommand($this->currency, $this->API));
-		$this->registerSubCommand(new SubSetCommand($this->currency, $this->API));
-		$this->registerSubCommand(new SubAddCommand($this->currency, $this->API));
-		$this->registerSubCommand(new SubRemoveCommand($this->currency, $this->API));
-		$this->registerSubCommand(new SubTransactionCommand($this->currency, $this->API));
+		$this->registerSubCommand(new BuySubCommand($this->pluginEP, $this->currency, $this->API));
+		$this->registerSubCommand(new SellSubCommand($this->pluginEP,$this->currency, $this->API));
+		$this->registerSubCommand(new SubSetCommand($this->pluginEP, $this->currency, $this->API));
+		$this->registerSubCommand(new SubAddCommand($this->pluginEP, $this->currency, $this->API));
+		$this->registerSubCommand(new SubRemoveCommand($this->pluginEP, $this->currency, $this->API));
+		$this->registerSubCommand(new SubTransactionCommand($this->pluginEP, $this->currency, $this->API));
 	}
 
 	public function onRun(CommandSender $sender, string $aliasUsed, array $args): void {
@@ -46,6 +47,8 @@ class CurrencyCommand extends BaseCommand implements PluginOwned {
 		$name = $this->currency->getName();
 		$currency = $this->currency;
 		$sing = API::getCurrencyManager()->getCurrencyByName($this->currency->getExchangeable())->getSing();
+
+		/** @var \gmp\eco\player\Player $sender */
 		Form::sendSelf(
 			"§l".$name." [".API::getCurrencyManager()->getPluginNameByCurrency($currency)."]",
 			"§l".$name." price: ".number_format($currency->getPrice(), 2, ".", ",").$sing."\nYou have: ".number_format($sender->get($name), 2, ".", ",").$currency->getSing(),

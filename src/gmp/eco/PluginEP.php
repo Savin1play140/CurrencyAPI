@@ -9,15 +9,22 @@ use pocketmine\event\player\{
 use pocketmine\plugin\PluginBase;
 use pocketmine\event\Listener;
 use pocketmine\utils\Config;
-use gmp\eco\util\database\libasynql;
 
 use gmp\eco\player\{Player, OfflinePlayer};
 use gmp\eco\util\SQL;
-
+use Exception;
+use Error;
+use pocketmine\utils\SingletonTrait;
 
 final class PluginEP extends PluginBase implements Listener {
+	use SingletonTrait;
+
 	private API $api;
 	private array $conf;
+
+	public function onLoad() : void{
+		self::setInstance($this);
+	}
 
 	public function onEnable(): void {
 		$this->api = new API($this);

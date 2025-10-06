@@ -1,11 +1,9 @@
 <?php
 namespace gmp\eco;
 
-use pocketmine\player\Player;
-
-use gmp\eco\form\SimpleForm;
-
-use gmp\eco\currency\{Currency, Dollar};
+use gmp\eco\player\Player;
+use jojoe77777\FormAPI\SimpleForm;
+use gmp\eco\currency\{Currency};
 
 final class Form {
 	public static function sendSelf(string $name, string $content, Player $player, Currency $currency): void {

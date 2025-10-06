@@ -11,8 +11,8 @@ class OfflinePlayer extends OPlayer {
 	private SQL $save;
 
 	public function __construct(
-		private string $name,
-		private ?CompoundTag $namedtag,
+		string $name,
+		?CompoundTag $namedtag,
 		API $api,
 		SQL $sql
 	){
@@ -25,6 +25,9 @@ class OfflinePlayer extends OPlayer {
 		$this->save = $sql;
 	}
 
+	public function getAPI() : ?API{
+		return $this->api;
+	}
 
 	public function haveCurrency(string $name): bool {
 		$name = strtolower($name);

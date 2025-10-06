@@ -1,25 +1,31 @@
 <?php
 namespace gmp\eco\command\sub;
 
-use gmp\eco\command\api\BaseSubCommand;
-use gmp\eco\command\api\args\{RawStringArgument, FloatArgument};
+use CortexPE\Commando\BaseSubCommand;
+use CortexPE\Commando\args\{RawStringArgument, FloatArgument};
 
 use pocketmine\command\{Command, CommandSender};
 use pocketmine\permission\DefaultPermissions;
 use pocketmine\Server;
 
 use gmp\eco\player\Player;
-use gmp\eco\{API, Form};
+use gmp\eco\{API, Form, PluginEP};
 use gmp\eco\currency\Currency;
 
 class SubSetCommand extends BaseSubCommand {
 	public function __construct(
+		PluginEP $pluginEP,
 		private Currency $currency,
 		private API $API
 	) {
-		parent::__construct("set", "set balance currency");
+		parent::__construct($pluginEP, "set", "set balance currency");
 		$this->setPermission(DefaultPermissions::ROOT_OPERATOR);
 	}
+
+	public function getAPI() : API{
+		return $this->API;
+	}
+
 	protected function prepare(): void {
 		$this->registerArgument(0, new FloatArgument("count", false));
 		$this->registerArgument(1, new RawStringArgument("player", true));

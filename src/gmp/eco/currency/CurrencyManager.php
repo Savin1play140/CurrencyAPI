@@ -5,6 +5,7 @@ use gmp\eco\command\CurrencyCommand;
 use pocketmine\Server;
 use gmp\eco\util\SQL;
 use gmp\eco\API;
+use gmp\eco\PluginEP;
 
 class CurrencyManager {
 	private array $currencies = [];
@@ -37,7 +38,7 @@ class CurrencyManager {
 		$this->currencies[$name] = $currency;
 		$this->pluginsOfCurrencies[$name] = $pluginName;
 
-		Server::getInstance()->getCommandMap()->register($pluginName, new CurrencyCommand($currency, $this->api));
+		Server::getInstance()->getCommandMap()->register($pluginName, new CurrencyCommand(PluginEP::getInstance(), $currency, $this->api));
 
 		$this->loadCurrencyData($currency);
 	}
