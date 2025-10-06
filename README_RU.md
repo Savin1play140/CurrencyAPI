@@ -1,4 +1,6 @@
 # CurrencyAPI | PocketMine-MP
+[![](https://poggit.pmmp.io/shield.state/CurrencyAPI)](https://poggit.pmmp.io/p/CurrencyAPI)
+
 Двухсторонний экономический A.P.I. для создания валют с одной стороны, а с другой обычный экономический плагин PocketMine-MP 5
 
 # Что потом?
@@ -51,16 +53,24 @@ class YourCurrency implements Currency {
 }
 ```
 # Для использования экономической стороны
-```php
-// Для добавления к балансу валюты игрока
+Для пополнения баланса:
+```php
 $target->add($currencyName, $count);
-// Для удаления из баланса валюты игрока
+```
+Для вычита с баланса:
+```php
 $target->remove($currencyName, $count);
-// Для установки баланса валюты игрока
+```
+Для указания баланса:
+```php
 $target->set($currencyName, $count);
-// Для совершения транзакции
+```
+Для совершения транзакции:
+```php
 $target->transaction($currencyName, $count $player);
-// Для получения баланса валюты игрока
+```
+Для получения баланса:
+```php
 $count = $target->get($currencyName);
 ```
 
