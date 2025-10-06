@@ -1,4 +1,6 @@
 # CurrencyAPI | PocketMine-MP
+[![](https://poggit.pmmp.io/shield.state/CurrencyAPI)](https://poggit.pmmp.io/p/CurrencyAPI)
+
 Two-way economic A.P.I. to create currencies on the one hand, and on the other the usual economic plugin PocketMine-MP 5
 [README RU](README_RU.md)
 
@@ -52,21 +54,28 @@ class YourCurrency implements Currency {
 }
 ```
 # For use economic side:
+Add to balance:
 ```php
-// To add a player's currency to the balance
-$target->add($currencyName, $count);
-// To remove a player's currency from the balance
-$target->remove($currencyName, $count);
-// To set the player's currency balance
-$target->set($currencyName, $count);
-// To complete a transaction
-$target->transaction($currencyName, $count, $player);
-// To get the player's currency balance
-$count = $target->get($currencyName);
+$player->add($currencyName, $count);
+```
+For remove from balance:
+```php
+$player->remove($currencyName, $count);
+```
+For set balance:
+```php
+$player->set($currencyName, $count);
+```
+For complete transaction:
+```php
+$player->transaction($currencyName, $count, $player);
+```
+For get balance
+```php
+$count = $player->get($currencyName);
 ```
 
 # Commands
-Default: <br>
 /[currency]
  - sell <count: float> all players
  - buy <count: float> all players
