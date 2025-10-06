@@ -21,11 +21,10 @@
             "type": "package",
             "package": {
                 "name": "jojoe77777/formapi",
-                "version": "master",
-                "source": {
-                    "type": "git",
-                    "url": "https://github.com/jojoe77777/FormAPI",
-                    "reference": "master"
+                "version": "dev-master",
+                "dist": {
+                    "type": "zip",
+                    "url": "https://github.com/jojoe77777/FormAPI/archive/refs/heads/master.zip"
                 }
             }
         }

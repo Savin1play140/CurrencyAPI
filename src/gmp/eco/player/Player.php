@@ -155,11 +155,11 @@ final class Player extends PPlayer {
 
 	public function purchase(string $currencyName, float $count, ?callable $callable0, ?callable $callable1) {
 		$currencyName = strtolower($currencyName);
-		if (!API::existsCurrency($currencyName)) return false;
+		if (!API::getCurrencyManager()->existsCurrency($currencyName)) return false;
 		if (!$this->haveCurrency($currencyName)) return false;
 
 		$successfully = $this->remove($currencyName, $count);
-		$currency = API::getCurrencyByName($currencyName);
+		$currency = API::getCurrencyManager()->getCurrencyByName($currencyName);
 		if ($successfully) {
 			if (!is_null($callable0)) $callable0($currency);
 		} else {
