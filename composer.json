@@ -3,8 +3,8 @@
     "type": "project",
     "require": {
         "pocketmine/pocketmine-mp": "^5.0.0",
-        "muqsit/simple-packet-handler": "v0.1.5",
-        "paroxity/commando": "3.2.0",
+        "muqsit/simple-packet-handler": "^0.1.5",
+        "paroxity/commando": "^3.2.0",
         "jojoe77777/formapi": "dev-master"
     },
     "license": "GPL-3.0",
